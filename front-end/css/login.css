@@ -22,32 +22,34 @@ h1 {
 }
 
 .form-group {
-    margin-bottom: 15px;
-    font-family: 'SimHei'
+    padding: 8px 0 8px 0;
+    font-family: 'SimHei';
 }
 
 .switch {
-    font-size: 13px;
-    font-family: 'Courier New', Courier, monospace;
-    color:darkgray;
-    text-decoration: darkgray;
     display: flex;
     justify-content: flex-end;
-    gap: 15px;  
+}
+
+.switch a{
+    font-size: 13px;
+    font-family: 'Courier New', Courier, monospace;
+    color:gray;
+    text-decoration: none;
     margin-right: 10px; 
 }
 
-
-label {
-    display: block;
-    margin-bottom: 5px;
+.switch a:hover {
+    color:lightskyblue;
+    text-decoration: none;
 }
 
 input[type="text"], input[type="password"] {
     width: 100%;
-    padding: 8px;
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 10px;
+    font-size: 15px;
 }
 
 button {
@@ -55,20 +57,21 @@ button {
     padding: 10px;
     border: none;
     border-radius: 10px;
-    background-color: #29b491;
+    background-color:#29b491;
     color: #fff;
     font-size: 20px;
     cursor: pointer;
-    font-family: 'Youyuan'
+    font-family: 'Youyuan';
 }
 
 button:hover {
-    background-color: #29b491;
+    background-color:green;
 }
 
 #message {
-    text-align: right;
-    margin-top: 10px;       
+    text-align: right;   
     color: red;
     font-size: 12px;
+    min-height: 15px; /* 设置最小高度，确保占用空间 */
+    margin: 0 0 5 5;
 }

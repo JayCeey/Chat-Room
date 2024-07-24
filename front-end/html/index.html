@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+    <div class="chat-room">
+        <div class="sidebar">
+            <div class="logo">
+                <span style="font-size: 40px; font-family:Arial, sans-serif;font-weight: bold;"> Chat Room</span>
+            </div>
+            <div class="profile">
+                <div class="user_avatar"></div>
+                <span class="username" onclick="user_info()">Username</span>
+            </div>
+            <div class="groups">
+                <div class="section-title">groups</div>
+                <div class="group">
+                    <div class="group_item">
+                        <div class="group_avatar"></div>
+                        <div class="group_name">group1</div>
+                    </div>
+                </div>
+            </div>
+            <div class="friends">
+                <div class="section-title">friends</div>
+                <div class="friend">
+                    <div class="friend_item">
+                        <div class="friend_avatar"></div>
+                        <div class="friend_name">friend1</div>
+                    </div>
+                    <div class="friend_item">
+                        <div class="friend_avatar"></div>
+                        <div class="friend_name">friend2</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-chat">
+            <div class="chat-info">
+                <span id="chat-name">聊天</span>
+                <span id="online-members">(当前在线人数: 18/55)</span>
+            </div>
+            <div class="messages">
+                <div class="message">
+                    <div class="message-left">
+                        <div class="avatar"></div>
+                        <p class="msg-left-text">Hello, how are you?</p>
+                    </div>
+                </div>
+                <div class="message">
+                    <div class="message-right">
+                        <p class="msg-right-text">I'm fine, thank you!</p>
+                        <div class="avatar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-bar">
+                <input type="text" placeholder="Type a message...">
+                <button>发送</button>
+            </div>
+        </div>
+    </div>
+    <script src="../js/index.js"></script>
+</body>
+</html>

@@ -1,3 +1,20 @@
+// 定义数据结构
+class LoginRequest {
+    constructor(username, password) {
+      this.username = username;
+      this.password = password;
+    }
+}
+
+// 定义数据结构
+class LoginResponse {
+    constructor(username, password) {
+      this.username = username;
+      this.password = password;
+    }
+}
+
+
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止默认表单提交行为
 
@@ -11,14 +28,19 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
+    const loginRequest = new LoginRequest(username, password);
+
+    console.log(JSON.stringify(loginRequest))
+
     // 在这里进行信息上传操作
     // 例如，使用 fetch 发送请求到服务器
-    fetch('/login', {
+    fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify(loginRequest)
+        
     })
     .then(response => response.json())
     .then(data => {
