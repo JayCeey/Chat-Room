@@ -1,3 +1,6 @@
+import config from './config.js';
+
+
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止默认表单提交行为
 
@@ -17,7 +20,8 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 
     // 在这里进行信息上传操作
     // 例如，使用 fetch 发送请求到服务器
-    fetch('http://localhost:3000/login', {
+
+    fetch(`${config.BASE_URL}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -40,7 +44,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         }
     })
     .catch(error => {
-        console.error('错误:', error);
+        console.error('错误:' + error);
         document.getElementById('message').textContent = error;
     });
 });
