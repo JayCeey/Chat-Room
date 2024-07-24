@@ -33,3 +33,14 @@ document.querySelector('input').addEventListener('keypress', (event) => {
         document.querySelector('button').click();
     }
 });
+
+
+function user_info(name, details) {
+    document.getElementById('userName').innerText = name;
+    document.getElementById('userDetails').innerText = details;
+    document.getElementById('myModal').style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById('myModal').style.display = "none";
+}
