@@ -6,9 +6,11 @@ const port = 3000;
 app.use(express.json());
 
 // 允许跨域
-app.all("*", (req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "localhost");
-    
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*"); // 允许localhost
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    next();
 })
 
 // 定义一个POST 请求路由
@@ -17,13 +19,21 @@ app.post('/login', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
 
-    const mockData = {
-        id: 1,
-        name: 'John Doe',
-        email: 'john.doe@example.com'
-    };
-    res.json(mockData);
+    const {username, password} = receivedData;
+    
+    if(password == "121212a"){
+        const mockData = {
+            id: 123,
+            user: "haha",
+            token: "123456",
+            success: true
+        };
+        res.json(mockData);
+    }else{
+        res.json({success: false, message: "密码错误"});
+    }
 });
+
 
 // 定义一个POST请求路由
 app.post('/register', (req, res) => {
@@ -33,8 +43,7 @@ app.post('/register', (req, res) => {
     // 响应模拟数据
     const mockResponse = {
         success: true,
-        message: 'Data received successfully',
-        receivedData: receivedData
+        message: 'register successfully',
     };
     res.json(mockResponse);
 });

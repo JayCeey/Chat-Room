@@ -1,20 +1,3 @@
-// 定义数据结构
-class LoginRequest {
-    constructor(username, password) {
-      this.username = username;
-      this.password = password;
-    }
-}
-
-// 定义数据结构
-class LoginResponse {
-    constructor(username, password) {
-      this.username = username;
-      this.password = password;
-    }
-}
-
-
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止默认表单提交行为
 
@@ -28,7 +11,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
-    const loginRequest = new LoginRequest(username, password);
+    const loginRequest = { username, password };
 
     console.log(JSON.stringify(loginRequest))
 
@@ -37,16 +20,24 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     fetch('http://localhost:3000/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(loginRequest)
-        
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('网络错误：' + response.statusText);
+        }
+        return response.json();
+    })
     .then(data => {
-        // 登录成功应该设置一个token来验证身份，包含用户的uid、用户名
-        console.log('成功:', data);
-        alert("登陆成功，正在跳转...")
+        console.log("返回data: ", data);
+        if(data.success){
+            // 登录成功应该设置一个token来验证身份，包含用户的uid、用户名
+            alert("登陆成功，正在跳转...");
+        }else{
+            alert("登陆失败：" + data.message);
+        }
     })
     .catch(error => {
         console.error('错误:', error);
