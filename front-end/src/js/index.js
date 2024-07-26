@@ -1,4 +1,29 @@
-document.querySelector('button').addEventListener('click', () => {
+import "../css/index.css";
+import DefaultAvatar from "assets/images/default_avatar.jpg";
+
+function user_info() {
+    document.getElementById('userName').innerText = "test";
+    document.getElementById('userDetails').innerText = "test123";
+    document.getElementById('myModal').style.display = "block";
+}
+window.user_info = user_info;
+
+function closeModal() {
+    document.getElementById('myModal').style.display = "none";
+}
+window.closeModal = closeModal;
+
+document.getElementById('add-button').addEventListener('click', () => {
+    document.getElementById('userName').innerText = "test";
+    document.getElementById('userDetails').innerText = "test123";
+    document.getElementById('myModal').style.display = "block";
+});
+
+document.getElementById('logout-button').addEventListener('click', () => {
+    window.location.href = 'login.html';
+});
+
+document.getElementById('send_message').addEventListener('click', () => {
     const input = document.querySelector('input');
     const messageText = input.value.trim();
     if (messageText) {
@@ -21,26 +46,18 @@ document.querySelector('button').addEventListener('click', () => {
         message_right.appendChild(text);
         message_right.appendChild(avatar);
 
-        
         messages.scrollTop = messages.scrollHeight;
 
         input.value = '';
     }
 });
 
+
+
 document.querySelector('input').addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        document.querySelector('button').click();
+        document.getElementById('send_message').click();
     }
 });
 
 
-function user_info(name, details) {
-    document.getElementById('userName').innerText = name;
-    document.getElementById('userDetails').innerText = details;
-    document.getElementById('myModal').style.display = "block";
-}
-
-function closeModal() {
-    document.getElementById('myModal').style.display = "none";
-}

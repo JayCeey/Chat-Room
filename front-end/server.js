@@ -1,5 +1,13 @@
+
+const mockData = require('./src/js/mock/login.js');
+const http = require('http');
 const express = require('express');
+const WebSocket = require('ws');
+
 const app = express();
+const server = http.createServer(express);
+const wss = new WebSocket.Server({ server });
+
 const port = 3000;
 
 // 中间件，用于解析JSON请求体
@@ -15,37 +23,38 @@ app.use((req, res, next) => {
 
 // 定义一个POST 请求路由
 app.post('/login', (req, res) => {
-
     const receivedData = req.body;
     console.log('Received data:', receivedData);
 
     const {username, password} = receivedData;
     
     if(password == "121212a"){
-        const mockData = {
-            id: 123,
-            user: "haha",
-            token: "123456",
-            success: true
-        };
-        res.json(mockData);
+        res.json(mockData.mockLoginResponse);
     }else{
-        res.json({success: false, message: "密码错误"});
+        res.json(mockData.mockLoginUnmatchPasswordResponse);
     }
 });
-
 
 // 定义一个POST请求路由
 app.post('/register', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
-
     // 响应模拟数据
-    const mockResponse = {
-        success: true,
-        message: 'register successfully',
-    };
-    res.json(mockResponse);
+    res.json(mockData.mockRegisterResponse);
+});
+
+// 处理 WebSocket 连接
+wss.on('connection', ws => {
+    console.log('A new client connected');
+  
+    ws.on('message', message => {
+      console.log(`Received message: ${message}`);
+      ws.send(`Server received: ${message}`);
+    });
+  
+    ws.on('close', () => {
+      console.log('Client disconnected');
+    });
 });
 
 // 启动服务器

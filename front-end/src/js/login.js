@@ -1,5 +1,7 @@
-import config from './config.js';
 
+import "../css/login.css";
+import login from 'api/login.js';
+import md5 from 'utils/encrypt.js';
 
 document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止默认表单提交行为
@@ -14,21 +16,16 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         return;
     }
 
+    // 密码使用md5加密
+    console.log(md5(password));
+
     const loginRequest = { username, password };
 
     console.log(JSON.stringify(loginRequest))
 
     // 在这里进行信息上传操作
     // 例如，使用 fetch 发送请求到服务器
-
-    fetch(`${config.BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginRequest)
-    })
-    .then(response => {
+    login(loginRequest).then(response => {
         if (!response.ok) {
             throw new Error('网络错误：' + response.statusText);
         }
@@ -39,6 +36,9 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
         if(data.success){
             // 登录成功应该设置一个token来验证身份，包含用户的uid、用户名
             alert("登陆成功，正在跳转...");
+            
+            window.location.href = "index.html"; // 跳转到/index.html
+            return;
         }else{
             alert("登陆失败：" + data.message);
         }

@@ -5,7 +5,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    margin: 0px;
 }
 
 .login-container {
@@ -24,6 +24,7 @@ h1 {
 .form-group {
     padding: 8px 0 8px 0;
     font-family: 'SimHei';
+    display: flex;
 }
 
 .switch {
@@ -46,10 +47,11 @@ h1 {
 
 input[type="text"], input[type="password"] {
     width: 100%;
-    padding: 12px;
+    padding: 12px 12px 12px 12px;
     border: 1px solid #ccc;
     border-radius: 10px;
     font-size: 15px;
+    text-align: left;
 }
 
 button {
@@ -62,6 +64,7 @@ button {
     font-size: 20px;
     cursor: pointer;
     font-family: 'Youyuan';
+    margin: 10px 0 10px 0;
 }
 
 button:hover {
@@ -72,6 +75,6 @@ button:hover {
     text-align: right;   
     color: red;
     font-size: 12px;
-    min-height: 15px; /* 设置最小高度，确保占用空间 */
-    margin: 0 0 5 5;
+    min-height: 16px; /* 设置最小高度，确保占用空间 */
+    margin: 0px;
 }

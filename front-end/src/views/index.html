@@ -4,64 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
-    <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
-
+    
     <!-- 弹窗 -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
+    <div id="myModal">
+        <div id="modal-content">
+            <span id="closeModal" onclick="closeModal()" >&times;</span>
             <div class="user_avatar"></div>
             <h2 id="userName"></h2>
             <p id="userDetails"></p>
         </div>
     </div>
 
-    <div class="chat-room">
-        <div class="sidebar">
-            <div class="logo">
+    <div id="chat-room">
+        <div id="sidebar">
+            <div id="logo">
                 <span style="font-size: 40px; font-family:Arial, sans-serif;font-weight: bold;"> Chat Room</span>
             </div>
-            <div class="profile" onclick="user_info()"> 
+            <div id="profile"> 
                 <div class="user_avatar"></div>
-                <div class="profile_part">
+                <div id="profile_section">
                     <span class="username">Username</span>
-                    <button class="logout">注销</button>
                 </div>
             </div>
-            <div class="groups">
+            <div id="groups">
                 <div class="section-title">groups</div>
-                <div class="group">
-                    <div class="group_item" onclick="user_info()">
+                <div id="group">
+                    <div class="group_item">
                         <div class="group_avatar"></div>
                         <div class="group_name">group1</div>
                     </div>
                 </div>
             </div>
-            <div class="friends">
+            <div id="friends">
                 <div class="section-title">friends</div>
-                <div class="friend">
-                    <div class="friend_item" onclick="user_info()">
+                <div id="friend">
+                    <div class="friend_item">
                         <div class="friend_avatar"></div>
                         <div class="friend_name">friend1</div>
                     </div>
-                    <div class="friend_item" onclick="user_info()">
+                    <div class="friend_item">
                         <div class="friend_avatar"></div>
                         <div class="friend_name">friend2</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="main-chat">
-            <div class="chat-info">
-                <span id="chat-name">聊天</span>
-                <span id="group-online-info">（当前在线人数：<span id="online-count">0</span> / <span id="group-count">0</span>）</span>
+        <div id="main-chat">
+            <div id="chat-info">
+                <div id="chat-title">
+                    <span>聊天</span>
+                    <span id="group-online-info">
+                        （当前在线人数：<span id="online-count">0</span> / <span id="group-count">0</span>）
+                    </span>
+                </div>
+                <div id="chat-button-right">
+                    <button id="add-button" >添加</button>
+                    <button id="logout-button" >退出</button>
+                </div>
             </div>
-            <div class="messages">
+            <div id="messages">
                 <div class="message">
                     <div class="message-left">
-                        <div class="avatar" onclick="user_info()"></div>
+                        <div class="avatar"></div>
                         <p class="msg-left-text">Hello, how are you?</p>
                     </div>
                 </div>
@@ -72,12 +78,11 @@
                     </div>
                 </div>
             </div>
-            <div class="input-bar">
+            <div id="input-bar">
                 <input type="text" placeholder="Type a message...">
-                <button>发送</button>
+                <button id="send_message">发送</button>
             </div>
         </div>
     </div>
-    <script src="../js/index.js"></script>
 </body>
 </html>
