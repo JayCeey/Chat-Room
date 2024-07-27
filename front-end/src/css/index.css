@@ -32,11 +32,13 @@
     font-size: 28px;
     font-weight: bold;
     cursor: pointer; 
+    transition: 0.3s;
 }
 
-#closeModel:hover, #closeModel:focus {
+#closeModal:hover, #closeModa l:focus {
     color: black;
     text-decoration: none;
+    transform: scale(1.2);
 }
 
 html, body {
