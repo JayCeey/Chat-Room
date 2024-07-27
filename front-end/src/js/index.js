@@ -1,17 +1,31 @@
 import "../css/index.css";
 import DefaultAvatar from "assets/images/default_avatar.jpg";
+import { socket } from "./ws_connection";
+import { Type } from "utils/constant";
 
-function user_info() {
-    document.getElementById('userName').innerText = "test";
+function user_info(username) {
+    document.getElementById('userName').innerText = username;
     document.getElementById('userDetails').innerText = "test123";
     document.getElementById('myModal').style.display = "block";
 }
-window.user_info = user_info;
 
-function closeModal() {
+// 对所有user_info的class类添加addEventListener
+document.querySelectorAll('.user_info').forEach((element)=>{
+    element.addEventListener('click', function(event) {
+        // 获取被点击的元素
+        const clickedElement = event.target;
+
+        console.log(clickedElement);
+
+        // 获取该元素的属性
+        const username = clickedElement.getAttribute('data-username');
+        user_info(username);
+    });
+});
+
+document.getElementById('closeModal').addEventListener('click', () => {
     document.getElementById('myModal').style.display = "none";
-}
-window.closeModal = closeModal;
+});
 
 document.getElementById('add-button').addEventListener('click', () => {
     document.getElementById('userName').innerText = "test";
@@ -24,10 +38,10 @@ document.getElementById('logout-button').addEventListener('click', () => {
 });
 
 document.getElementById('send_message').addEventListener('click', () => {
-    const input = document.querySelector('input');
+    const input = document.getElementById('send_message_input');
     const messageText = input.value.trim();
     if (messageText) {
-        const messages = document.querySelector('.messages');
+        const messages = document.querySelector('#messages');
         const message = document.createElement('div');
         message.classList.add('message');
 
@@ -49,12 +63,14 @@ document.getElementById('send_message').addEventListener('click', () => {
         messages.scrollTop = messages.scrollHeight;
 
         input.value = '';
+
+        socket.send(JSON.stringify({"type": Type.message, 
+                                    "content": messageText, 
+                                    "user": "jayce"}));
     }
 });
 
-
-
-document.querySelector('input').addEventListener('keypress', (event) => {
+document.querySelector('#send_message_input').addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         document.getElementById('send_message').click();
     }

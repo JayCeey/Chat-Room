@@ -10,7 +10,7 @@
     <!-- 弹窗 -->
     <div id="myModal">
         <div id="modal-content">
-            <span id="closeModal" onclick="closeModal()" >&times;</span>
+            <span id="closeModal" >&times;</span>
             <div class="user_avatar"></div>
             <h2 id="userName"></h2>
             <p id="userDetails"></p>
@@ -23,9 +23,9 @@
                 <span style="font-size: 40px; font-family:Arial, sans-serif;font-weight: bold;"> Chat Room</span>
             </div>
             <div id="profile"> 
-                <div class="user_avatar"></div>
+                <div class="user_avatar user_info"></div>
                 <div id="profile_section">
-                    <span class="username">Username</span>
+                    <span class="username user_info">jayce</span>
                 </div>
             </div>
             <div id="groups">
@@ -79,7 +79,7 @@
                 </div>
             </div>
             <div id="input-bar">
-                <input type="text" placeholder="Type a message...">
+                <input id="send_message_input" type="text" placeholder="Type a message...">
                 <button id="send_message">发送</button>
             </div>
         </div>

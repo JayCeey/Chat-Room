@@ -94,12 +94,15 @@ html, body {
     border-radius: 50%;
 }
 
+.user_info {
+    cursor: pointer;
+}
+
 .username {
     font-weight: bold;
     font-size: 24px;
     margin-left: 10px;
     transition: transform 0.3s ease;
-    cursor: pointer;
 }
 
 .username:hover {
@@ -211,10 +214,11 @@ html, body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    padding-top: 25px;
 }
 
 .message {
-    margin-top: 25px;
+    margin-bottom: 25px;
     width: 100%;
 }
 

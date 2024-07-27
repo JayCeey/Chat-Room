@@ -6,7 +6,8 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 module.exports = {
     entry: {
         login: './src/js/login.js',
-        index: './src/js/index.js'
+        index: './src/js/index.js',
+        ws_connection: './src/js/ws_connection.js',
     },
     output: {
         filename: '[name].bundle.js',
@@ -66,7 +67,7 @@ module.exports = {
         new HtmlWebpackPlugin({ 
             template: './src/views/index.html',
             filename: 'index.html',
-            chunks: ['index'],
+            chunks: ['index', 'ws_connection'],
         }),
     ],
 };
