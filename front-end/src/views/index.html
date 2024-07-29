@@ -8,12 +8,43 @@
 <body>
     
     <!-- 弹窗 -->
-    <div id="myModal">
-        <div id="modal-content">
-            <span id="closeModal" >&times;</span>
-            <div class="user_avatar"></div>
-            <h2 id="userName"></h2>
-            <p id="userDetails"></p>
+    <div id="user-modal" class="page-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modal-header">
+                <div class="avatar user-avatar"></div>
+                <h2 class="username"></h2>
+            </div>
+            <p id="user-details"></p>
+        </div> 
+    </div>
+
+    <!-- 添加好友弹窗 -->
+    <div id="add-modal" class="page-modal">
+        <div id="find-modal-content" class="modal-content">
+            <span class="close-modal" >&times;</span>
+            <div id="find-friend">
+                <input type="text" id="input-friend-name" placeholder="请输入好友昵称">
+                <button id="find-friend-btn">查找</button>
+            </div>
+            <div id="find-friend-result">
+                <span class="find-result-title">用户</span>
+                <div id="find-user-result-list" class="find-result-list">
+                    <div class="find-result-item">
+                        <div class="avatar friend-avatar"></div>
+                        <span class="username">user1</span>
+                        <button class="add-friend-btn">添加</button>
+                    </div>
+                </div>
+                <span class="find-result-title">群组</span>
+                <div id="find-group-result-list" class="find-result-list">
+                    <div class="find-result-item">
+                        <div class="avatar friend-avatar"></div>
+                        <span class="username">user1</span>
+                        <button class="add-friend-btn">添加</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -23,64 +54,64 @@
                 <span style="font-size: 40px; font-family:Arial, sans-serif;font-weight: bold;"> Chat Room</span>
             </div>
             <div id="profile"> 
-                <div class="user_avatar user_info"></div>
-                <div id="profile_section">
-                    <span class="username user_info">jayce</span>
+                <div class="avatar user-avatar"></div>
+                <div id="profile-section">
+                    <span class="username">未登录</span>
                 </div>
             </div>
             <div id="groups">
                 <div class="section-title">groups</div>
                 <div id="group">
-                    <div class="group_item">
-                        <div class="group_avatar"></div>
-                        <div class="group_name">group1</div>
+                    <div class="group-item" data-name="group1">
+                        <div class="avatar group-avatar"></div>
+                        <div class="group-name"></div>
                     </div>
                 </div>
             </div>
             <div id="friends">
                 <div class="section-title">friends</div>
                 <div id="friend">
-                    <div class="friend_item">
-                        <div class="friend_avatar"></div>
-                        <div class="friend_name">friend1</div>
+                    <div class="friend-item" data-name="friend1">
+                        <div class="avatar friend-avatar"></div>
+                        <div class="friend-name"></div>
                     </div>
-                    <div class="friend_item">
-                        <div class="friend_avatar"></div>
-                        <div class="friend_name">friend2</div>
+                    <div class="friend-item" data-name="friend2">
+                        <div class="avatar friend-avatar"></div>
+                        <div class="friend-name"></div>
                     </div>
                 </div>
             </div>
         </div>
         <div id="main-chat">
-            <div id="chat-info">
+            <div id="chat-header">
                 <div id="chat-title">
-                    <span>聊天</span>
-                    <span id="group-online-info">
-                        （当前在线人数：<span id="online-count">0</span> / <span id="group-count">0</span>）
-                    </span>
+                    
                 </div>
                 <div id="chat-button-right">
                     <button id="add-button" >添加</button>
+                    <button id="msg-button" >消息</button>
                     <button id="logout-button" >退出</button>
                 </div>
             </div>
             <div id="messages">
-                <div class="message">
+                <!--
+                <div class="message" data-username="friend1">
                     <div class="message-left">
                         <div class="avatar"></div>
                         <p class="msg-left-text">Hello, how are you?</p>
                     </div>
                 </div>
-                <div class="message">
+                <div class="message" data-username="jayce">
                     <div class="message-right">
                         <p class="msg-right-text">I'm fine, thank you!</p>
                         <div class="avatar"></div>
                     </div>
                 </div>
+                -->
             </div>
             <div id="input-bar">
-                <input id="send_message_input" type="text" placeholder="Type a message...">
-                <button id="send_message">发送</button>
+                <input id="send-message-input" type="text" placeholder="Type a message...">
+                <button id="send-message">发送</button>
             </div>
         </div>
     </div>

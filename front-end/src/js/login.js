@@ -1,9 +1,10 @@
-
 import "../css/login.css";
-import login from 'api/login.js';
+import {login} from 'api/login.js';
 import md5 from 'utils/encrypt.js';
 
-document.getElementById('loginForm').addEventListener('submit', function(event) {
+
+
+document.getElementById('login-form').addEventListener('submit', function(event) {
     event.preventDefault(); // 阻止默认表单提交行为
 
     // 获取用户名和密码
@@ -17,9 +18,13 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     }
 
     // 密码使用md5加密
-    console.log(md5(password));
+    const encrypted_pwd = md5(password);
+    console.log(encrypted_pwd);
 
-    const loginRequest = { username, password };
+    const loginRequest = { 
+        'username': username, 
+        'password': encrypted_pwd,
+    };
 
     console.log(JSON.stringify(loginRequest))
 
@@ -34,9 +39,11 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     .then(data => {
         console.log("返回data: ", data);
         if(data.success){
-            // 登录成功应该设置一个token来验证身份，包含用户的uid、用户名
+            // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
             alert("登陆成功，正在跳转...");
             
+            sessionStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+
             window.location.href = "index.html"; // 跳转到/index.html
             return;
         }else{

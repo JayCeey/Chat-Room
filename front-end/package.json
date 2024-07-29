@@ -24,6 +24,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "style-loader": "^4.0.0",

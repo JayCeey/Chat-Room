@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-#myModal {
+.page-modal {
     display: none; 
     position: fixed; 
     z-index: 1; 
@@ -18,7 +18,16 @@
     background-color: rgba(0,0,0,0.4); 
 }
 
-#modal-content {
+#model-header{
+    display: flex;
+    justify-content: left;
+}
+
+#find-modal-content {
+    height: 50%;
+}
+
+.modal-content {
     background-color: #fefefe;
     margin: auto;
     padding: 20px;
@@ -26,7 +35,7 @@
     width: 30%;
 }
 
-#closeModal {
+.close-modal {
     color: #aaa;
     float: right;
     font-size: 28px;
@@ -35,10 +44,83 @@
     transition: 0.3s;
 }
 
-#closeModal:hover, #closeModa l:focus {
+.close-modal:hover, .close-modal:focus {
     color: black;
     text-decoration: none;
     transform: scale(1.2);
+}
+
+#find-friend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    width: 100%;
+}
+
+#input-friend-name{
+    width: 80%;
+    height: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-size: 16px;
+    margin-right: 20px;
+}
+
+#find-friend-btn {
+    width: 60px;
+    height: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+#find-friend-result{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.find-result-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4CAF50;
+    text-align: center;
+}
+
+.find-result-list {
+    display: flex;
+    align-items: center;
+    width:100%;
+}
+
+.find-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.add-friend-btn {
+    width: 60px;
+    height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    margin-left: auto;
+    cursor: pointer;
 }
 
 html, body {
@@ -62,12 +144,13 @@ html, body {
 }
 
 #sidebar {
-    width: 25%;
+    width: 20%;
     background-color: #e6e6e6;
     padding: 0px 30px 30px 30px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    border-radius: 50px 0px 0px 50px;
 }
 
 #logo {
@@ -80,32 +163,38 @@ html, body {
     align-items: center;
     gap: 10px;
     padding-left: 10px;
+    height: 50px;
 }
 
-#profile_section {
+#profile-section {
     display: flex;
     flex-direction: column;
 }
 
-.user_avatar {
+.user-avatar {
     width: 80px;
     height: 80px;
     background-color: #3b5998;
     border-radius: 50%;
+    transition: transform 0.3s ease;
 }
 
-.user_info {
+.user-avatar:hover {
+    transform: scale(1.2);
+}
+
+.user-info {
     cursor: pointer;
 }
 
-.username {
+#profile-section .username {
     font-weight: bold;
     font-size: 24px;
     margin-left: 10px;
     transition: transform 0.3s ease;
 }
 
-.username:hover {
+#profile-section .username:hover {
     font-weight: bold;
     color:deepskyblue;
     font-size: 24px;
@@ -129,40 +218,55 @@ html, body {
     flex-direction: column;
     gap: 8px;
     height: 320px;
-    padding: 12px;
+    padding: 15px;
     overflow-y: auto;
+    border-radius: 20px;
 }
 
-.group_item, .friend_item{
+.group-item, .friend-item{
     display: flex;
+    justify-content: left;
     font-size: 16px;
     color:#555;
     cursor: pointer;
+    align-items: center;
+    height: 30px;
+    transition: transform 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
+    border: 3px solid transparent;
+    border-radius: 10px;
 }
 
-.group_avatar, .friend_avatar {
-    width: 20px;
-    height: 20px;
+.group-item:hover, .friend-item:hover {
+    transform: scale(1.1);
+    border-color: #8f8f8f;
+}
+
+.group-avatar, .friend-avatar {
+    width: 30px;
+    height: 30px;
     background-color: #3b5998;
     border-radius: 50%;
     margin-right: 10px;
 }
 
-.group_name:hover, .friend_name:hover {
-    color:deepskyblue;
-}
-
-#chat-info {
+#chat-header {
     height: 50px;
     display: flex;
     padding: 30px;
-    font-size: 24px;
     background-color: #e6e6e6  ;
     align-items: center;
 }
 
 #chat-title {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    gap: 20px;
+}
+
+#chat-title-avatar {
+    width: 50px;
+    height: 50px;
 }
 
 #chat-button-right {
@@ -195,17 +299,15 @@ html, body {
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
-    background-color: #3b5998;
     border-radius: 50%;
     cursor: pointer;
 }
 
 .avatar img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    border: 3px solid black;
 }
 
 #messages {
@@ -221,6 +323,16 @@ html, body {
     margin-bottom: 25px;
     width: 100%;
 }
+
+#no-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 20px;
+    color: #555;
+}
+
 
 .message-left {
     display: flex;
@@ -243,10 +355,12 @@ html, body {
     margin: 0 0 0 24px;
     padding: 14px 10px;
     min-width: 20px;
-    max-width: 70%;
+    max-width: 500px;
     color: #555;
     font-size: 18px;
     background: #e0f2ff;
+    border-radius: 6px;
+    word-wrap: break-word;
 }
   
 .msg-left-text:before {
@@ -270,11 +384,13 @@ html, body {
     margin: 0 24px 0 0;
     padding: 14px 10px;
     min-width: 20px;
-    max-width: 70%;
+    max-width: 500px;
     clear: both;
     color: #555;
     font-size: 18px;
     background: #8ffcdb;
+    border-radius: 6px;
+    word-wrap: break-word;
 }
   
 .msg-right-text:before {

@@ -1,8 +1,11 @@
 const mockLoginResponse = {
-    id: 123,
-    user: "jayce",
-    token: "123456",
-    success: true
+    userInfo: {
+        uid: 123,
+        username: "jaycehhh",
+        avatar: "",
+        userDetails: "hello, this is jayce",
+    },
+    success: true,
 };
 
 const mockLoginUnmatchPasswordResponse = {
