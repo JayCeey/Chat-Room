@@ -1,3 +1,7 @@
+
+const {Type} = require("../utils/constant.js");
+
+
 const mockLoginResponse = {
     userInfo: {
         uid: 123,
@@ -27,17 +31,19 @@ const mockUserFriendResponse = {
 const mockUserChatResponse = {
     chats: [
         {
-            uid: 444,
+            name: "group1",
+            type: Type.message_group,
             history: [
-                { content: "hello", from: 123, to: 444, time: "2022-01-01 12:00:00" },
-                { content: "how are you", from: 444, to: 123, time: "2022-01-01 12:01:00" },
+                { content: "hello", from: "group1", to: "jaycehhh", time: "2022-01-01 12:00:00" },
+                { content: "how are you", from: "jaycehhh", to: "group1", time: "2022-01-01 12:01:00" },
             ],
         },
         {
-            uid: 555,
+            name: "friend1",
+            type: Type.message_friend,
             history: [
-                { content: "this is ", from: 123, to: 555, time: "2022-01-01 12:00:00" },
-                { content: "how are you", from: 555, to: 123, time: "2022-01-01 12:01:00" },
+                { content: "this is ", from: "friend1", to: "jaycehhh", time: "2022-01-01 12:00:00" },
+                { content: "fuck you", from: "jaycehhh", to: "friend1", time: "2022-01-01 12:01:00" },
             ],
         },
     ]

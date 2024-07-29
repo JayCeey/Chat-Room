@@ -17,18 +17,30 @@ server.on('connection', (ws) => {
         
         data_type = parseInt(data.type);
 
-        if(data_type == Type.message){
-            console.log("type message ");
+        if(data_type == Type.message_friend){
+            console.log("message friend");
             ws.send(
                 JSON.stringify({
-                    'type': Type.message,
-                    'from': 'jayce',
+                    'type': Type.message_friend,
+                    'from': 'server123',
+                    'to': data.from,
+                    'content': 'received: ' + data.content,
+                    'timestamp': new Date().toISOString(),
+                })
+            ); 
+        }else if(data_type == Type.message_group){
+            console.log("message group");
+            ws.send(
+                JSON.stringify({
+                    'type': Type.message_group,
+                    'from': 'server123',
+                    'to': data.from,
                     'content': 'received: ' + data.content,
                     'timestamp': new Date().toISOString(),
                 })
             ); 
         }else if(data_type == Type.online){
-            console.log("type message ");
+            console.log("user online: ", data.from);
             // 向客户端发送消息
             ws.send(
                 JSON.stringify({
@@ -39,7 +51,7 @@ server.on('connection', (ws) => {
                 })
             ); 
         }else if(data_type == Type.offline){
-            console.log("type message ");
+            console.log("user offline: ", data.from);
         }
     });
 
