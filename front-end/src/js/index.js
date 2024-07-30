@@ -3,7 +3,7 @@ import DefaultAvatar from "assets/images/default_avatar.jpg";
 import { setupWebSocket } from "./ws_connection";
 import { Type } from "utils/constant";
 import { logout } from 'api/login.js';
-import { history } from 'api/chat.js';
+import { history, getFriends } from 'api/chat.js';
 
 
 
@@ -21,7 +21,7 @@ const chat_messages = {
     }
 }; 
 
-
+// 初始化
 const userInfo = init_user_info();
 init_user_profile(userInfo); // 初始化用户信息
 init_avatars();
@@ -30,10 +30,76 @@ init_logout_button();
 const socket = init_socket();
 init_send_message(socket);
 init_send_message_input();
-init_group_item();
-init_friend_item();
 
+// 获取好友列表
+get_user_friends_list();
+// 根据userInfo获取消息
 get_history_messages(userInfo);
+
+function get_user_friends_list(){
+    getFriends(userInfo).then(response => {
+        if (!response.ok) {
+            throw new Error('网络错误：' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if(!data.success){
+            throw new Error('获取好友列表失败');
+        }
+        console.log("返回friends_list: ", data);
+        const friendList = data.friends;
+        for (let i = 0; i < friendList.length; i++) {
+            let friendInfo = friendList[i];
+            init_friend_section('friend', friendInfo);
+            init_chat_info('friend', friendInfo.username);
+        }
+        const groupList = data.groups;
+        for (let i = 0; i < groupList.length; i++) {
+            let groupInfo = groupList[i];
+            init_friend_section('group', groupInfo);
+            init_chat_info('group', groupInfo.username);
+        }
+    })
+    .catch(error => {
+        console.error('错误:' + error);
+    }); 
+}
+
+// 初始化朋友或群组列表
+function init_friend_section(type, friendInfo){
+    if(type == 'friend'){
+        const friend_item = document.createElement('div');
+        const friendName = friendInfo.username;
+        friend_item.classList.add('friend-item');
+        friend_item.setAttribute('data-name', friendName);
+        friend_item.innerHTML = `
+            <div class="avatar friend-avatar">
+                <img src="${DefaultAvatar}" alt="头像">
+            </div>
+            <div class="friend-name">${friendInfo.username}</div>
+        `;
+        friend_item.addEventListener('click', () => {
+            handle_friend_item_click(friendName);
+        });
+        document.getElementById('friend').appendChild(friend_item);
+    }else if(type == 'group'){
+        const group_item = document.createElement('div');
+        const groupName = friendInfo.username;
+        group_item.classList.add('group-item');
+        group_item.setAttribute('data-name', groupName);
+        group_item.innerHTML = `
+            <div class="avatar friend-avatar">
+                <img src="${DefaultAvatar}" alt="头像">
+            </div>
+            <div class="friend-name">${friendInfo.username}</div>
+        `;
+        group_item.addEventListener('click', () => {
+            handle_group_item_click(groupName);
+        });
+        document.getElementById('group').appendChild(group_item);
+    }
+}
 
 // 获取历史的消息
 function get_history_messages(userInfo) { 
@@ -44,6 +110,10 @@ function get_history_messages(userInfo) {
         return response.json();
     })
     .then(data => {
+        if(!data.success){
+            throw new Error('获取历史消息失败');
+        }
+
         console.log("返回chat history: ", data);
 
         let chats = data.chats;
@@ -51,9 +121,11 @@ function get_history_messages(userInfo) {
         for(let i = 0; i < chats.length; i++) {
             let chat = chats[i];
             if(chat.type == Type.message_friend){
-                chat_messages['friend'][chat['name']] = chat.history;
+                init_chat_info('friend', chat['name']);
+                chat_messages['friend'][chat['name']]['history'] = chat.history;
             }else if(chat.type == Type.message_group){
-                chat_messages['group'][chat['name']] = chat.history;
+                init_chat_info('group', chat['name']);
+                chat_messages['group'][chat['name']]['history'] = chat.history;
             }
         }
     })
@@ -91,6 +163,15 @@ function init_user_profile(userInfo){
     });
 }
 
+// 对所有avatar的class类添加DefaultAvatar
+function init_avatars(){
+    document.querySelectorAll('.avatar').forEach((element)=>{
+        const img = document.createElement('img');
+        img.src = DefaultAvatar;
+        element.appendChild(img);
+    });
+}
+
 // 弹窗显示用户信息
 function user_info(userInfo) {
     const user_modal = document.getElementById("user-modal");
@@ -100,15 +181,6 @@ function user_info(userInfo) {
     const close_btn = user_modal.querySelector('.close-modal');
     close_btn.addEventListener('click', () => {
         user_modal.style.display = "none";
-    });
-}
-
-// 对所有avatar的class类添加DefaultAvatar
-function init_avatars(){
-    document.querySelectorAll('.avatar').forEach((element)=>{
-        const img = document.createElement('img');
-        img.src = DefaultAvatar;
-        element.appendChild(img);
     });
 }
 
@@ -186,14 +258,33 @@ function init_socket(){
         if(data.type == Type.message_friend){
             const messageText = data.content; //  挂载到左侧用户发送的消息栏上
             if (messageText) {
-                add_message(1, data.from, messageText);
-                add_message_to_chatlist(1, messageText, data.timestamp);
+                if(!chat_messages['friend'][data.from]){
+                    return;
+                }
+
+                add_message_to_chatlist('friend', data.from, messageText, data.timestamp);
+                if(currentChatType == Type.message_friend && currentChatId == data.from){
+                    // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
+                    add_message(1, data.from, messageText);
+                }else{
+                    // 不是当前窗口的，那么就添加到未读消息中，其中已经保证了chat_info的初始化
+                    add_unread_message('friend', data.from);
+                }
             }
         }else if(data.type == Type.message_group){
             const messageText = data.content; //  挂载到左侧用户发送的消息栏上
             if (messageText) {
-                add_message(1, data.from, messageText);
-                add_message_to_chatlist(1, messageText, data.timestamp);
+                if(!chat_messages['group'][data.from]){
+                    return;
+                }
+
+                add_message_to_chatlist('group', data.from, messageText, data.timestamp);
+                if(currentChatType == Type.message_group && currentChatId == data.from){
+                    add_message(1, data.from, messageText);
+                }else{
+                    // 不是当前窗口的，那么就添加到未读消息中
+                    add_unread_message('group', data.from);
+                }
             }
         }
     });
@@ -201,29 +292,76 @@ function init_socket(){
     return socket;
 }
 
+function add_unread_message(type, chatId){
+    chat_messages[type][chatId]['num_unread_msg'] += 1;
+    let num_unread_msg = chat_messages[type][chatId]['num_unread_msg'];
+    // 在当前的用户列表中找到具有该属性的元素，并且添加未读消息
+    let item;
+    if(type == 'friend'){
+        item = document.querySelector(`.friend-item[data-name="${chatId}"]`);
+    }else if(type == 'group'){
+        item = document.querySelector(`.group-item[data-name="${chatId}"]`);
+    }
+    const unread_msg = item.querySelector('.unread-msg');
+    if(!unread_msg){
+        item.innerHTML += `
+                <div class="unread-msg" data-num="${num_unread_msg}">${num_unread_msg}</div>
+            `;
+    }else{
+        unread_msg.setAttribute('data-num', num_unread_msg);
+        if(num_unread_msg >= 100){
+            unread_msg.innerText = "99+";
+        }else{
+            unread_msg.innerText = num_unread_msg;
+        }
+    }
+}
+
+function clear_unread_message(type, chatId){
+    chat_messages[type][chatId]['num_unread_msg'] = 0;
+    let item;
+    if(type == 'friend'){
+        item = document.querySelector(`.friend-item[data-name="${chatId}"]`);
+    }else if(type == 'group'){
+        item = document.querySelector(`.group-item[data-name="${chatId}"]`);
+    }
+    const unread_msg = item.querySelector('.unread-msg');
+    if(unread_msg){
+        unread_msg.remove();
+    }
+}
+
+function init_chat_info(type, chatId){
+    if(!chat_messages[type][chatId]){
+        // 初始化聊天信息
+        chat_messages[type][chatId] = {
+            'history': [],
+            'num_unread_msg': 0,
+            'latest_msg': '', // 用于主动向服务器发送获取最新消息请求，一般websocket在线时服务器主动推送最新消息。
+            'latest_timestamp': '',
+        };
+    }
+}
+
 // 添加到消息列表中
-function add_message_to_chatlist(send, messageText, timestamp){
-    let from, to, type;
-    
-    if(currentChatType == Type.message_friend){
-        type = 'friend';
-    }else if(currentChatType == Type.message_group){
-        type = 'group';
-    }
+function add_message_to_chatlist(type, sendId, messageText, timestamp){
+    let from, to, chatId;
 
-    if(!chat_messages[type][currentChatId]){
-        chat_messages[type][currentChatId] = [];
-    }
-
-    if(send == 0){
+    if(sendId == userInfo.username){
         from = userInfo.username;
         to = currentChatId;
-    }else if(send == 1){
-        from = currentChatId;
+        chatId = to;
+    }else{
+        from = sendId;
         to = userInfo.username;
+        chatId = from;
     }
 
-    chat_messages[type][currentChatId].push({
+    if(!chat_messages[type][chatId]){
+        init_chat_info(type, chatId);
+    }
+
+    chat_messages[type][chatId]['history'].push({
         content: messageText,
         from: from,
         to: to,
@@ -304,19 +442,26 @@ function init_send_message(socket){
         const input = document.getElementById('send-message-input');
         const messageText = input.value.trim();
         if (messageText) {
-            
-            socket.send(JSON.stringify({"type": currentChatType, 
-                                        "content": messageText, 
-                                        "from": userInfo.username,
-                                        "to": "friend1",
-                                    }));
-
 
             const timestamp = new Date().toLocaleTimeString();
 
+            socket.send(JSON.stringify({"type": currentChatType, 
+                                        "content": messageText, 
+                                        "from": userInfo.username,
+                                        "to": currentChatId,
+                                        "timestamp": timestamp,
+                                    }));
+
             add_message(0, userInfo.username, messageText);
 
-            add_message_to_chatlist(0, messageText, timestamp);
+            let type;
+            if(currentChatType == Type.message_friend){
+                type = "friend";
+            }else if(currentChatType == Type.message_group){
+                type = "group";   
+            }
+ 
+            add_message_to_chatlist(type, userInfo.username, messageText, timestamp);
 
             input.value = '';
         }
@@ -349,6 +494,8 @@ function load_messages(chatInfo){
 }
 
 function handle_group_item_click(groupName) {
+    const online_num = 10;
+
     const chatTitle = document.querySelector("#chat-title");
     chatTitle.setAttribute("data-name", groupName);
     chatTitle.setAttribute("data-type", "group");
@@ -356,8 +503,7 @@ function handle_group_item_click(groupName) {
         <div id="chat-title-avatar" class="avatar">
             <img src="${DefaultAvatar}">
         </div>
-        <span id="chat-title-name">${groupName}</span>
-        <span id="online-state">（在线）</span>
+        <span id="chat-title-name">${groupName}（当前在线人数：${online_num}）</span>
     `; 
 
     // 添加userinfo点击事件
@@ -370,31 +516,23 @@ function handle_group_item_click(groupName) {
 
     currentChatType = Type.message_group;; // 当前聊天类型为群组聊天
     currentChatId = groupName;
-    const chatInfo = chat_messages['group'][currentChatId];
+    const chatInfo = chat_messages['group'][currentChatId]['history'];
     load_messages(chatInfo);
-}
 
-// 点击group弹出对应的chat_message消息记录
-function init_group_item(){
-    document.querySelectorAll('.group-item').forEach((item) => {
-        const groupName = item.getAttribute('data-name');
-        item.querySelector('.group-name').textContent = groupName;
-        item.addEventListener('click', () => {
-            handle_group_item_click(groupName);
-        });
-    })
+    clear_unread_message('group', currentChatId);
 }
 
 function handle_friend_item_click(friendName) {
+    // 更新标题
+    const data_online = true;
     const chatTitle = document.querySelector("#chat-title");
     chatTitle.setAttribute("data-name", friendName);
     chatTitle.setAttribute("data-type", "friend");
     chatTitle.innerHTML = `
-        <div id="chat-title-avatar" class="avatar">
+        <div id="chat-title-avatar" class="avatar" data-online="${data_online}">
             <img src="${DefaultAvatar}">
         </div>
         <span id="chat-title-name">${friendName}</span>
-        <span id="online-state">（在线）</span>
     `;
 
     // 添加userinfo点击事件
@@ -407,19 +545,10 @@ function handle_friend_item_click(friendName) {
     
     currentChatType = Type.message_friend; // 当前聊天类型为好友聊天
     currentChatId = friendName;
-    const chatInfo = chat_messages['friend'][currentChatId];
+    const chatInfo = chat_messages['friend'][currentChatId]['history'];
     load_messages(chatInfo);
-}
 
-// 点击friend弹出对应的chat_message消息记录
-function init_friend_item(){
-    document.querySelectorAll('.friend-item').forEach((item) => {
-        const friendName = item.getAttribute('data-name');
-        item.querySelector('.friend-name').textContent = friendName;
-        item.addEventListener('click', () => {
-            handle_friend_item_click(friendName);
-        });
-    })
+    clear_unread_message('friend', currentChatId);
 }
 
 

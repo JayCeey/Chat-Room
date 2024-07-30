@@ -22,23 +22,45 @@ server.on('connection', (ws) => {
             ws.send(
                 JSON.stringify({
                     'type': Type.message_friend,
-                    'from': 'server123',
+                    'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
                     'timestamp': new Date().toISOString(),
+                    'latestMsg': 3, // 最新的版本
                 })
-            ); 
+            );
+            ws.send(
+                JSON.stringify({
+                    'type': Type.message_group,
+                    'from': "server123",
+                    'to': data.from,
+                    'content': 'this is server annoncement!!!',
+                    'timestamp': new Date().toISOString(),
+                    'latestMsg': 3, // 最新的版本
+                })
+            );
         }else if(data_type == Type.message_group){
             console.log("message group");
             ws.send(
                 JSON.stringify({
                     'type': Type.message_group,
-                    'from': 'server123',
+                    'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
                     'timestamp': new Date().toISOString(),
+                    'version': data.version+1,
                 })
-            ); 
+            );
+            ws.send(
+                JSON.stringify({
+                    'type': Type.message_friend,
+                    'from': "server123",
+                    'to': data.from,
+                    'content': 'this is server annoncement!!!',
+                    'timestamp': new Date().toISOString(),
+                    'latestMsg': 3, // 最新的版本
+                })
+            );
         }else if(data_type == Type.online){
             console.log("user online: ", data.from);
             // 向客户端发送消息

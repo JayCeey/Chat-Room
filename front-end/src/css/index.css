@@ -242,6 +242,31 @@ html, body {
     border-color: #8f8f8f;
 }
 
+.unread-msg {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: transform 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
+}
+
+.unread-msg:hover {
+    transform: scale(1.1);
+    border-color: #8f8f8f;
+}
+
+.group-item.active, .friend-item.active {
+    background-color: #c1c1c1;
+}
+
 .group-avatar, .friend-avatar {
     width: 30px;
     height: 30px;
@@ -274,6 +299,27 @@ html, body {
 #chat-title-avatar {
     width: 50px;
     height: 50px;
+    position: relative;
+}
+
+#chat-title-avatar[data-online="true"]::after, 
+#chat-title-avatar[data-online="false"]::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  right: 2px;
+  border: 2px solid #fff;
+}
+
+#chat-title-avatar[data-online="true"]::after {
+    background-color: lightgreen;
+}
+  
+#chat-title-avatar[data-online="false"]::after {
+    background-color: red;
 }
 
 #chat-button-right {
