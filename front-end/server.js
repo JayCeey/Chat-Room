@@ -61,7 +61,6 @@ app.post('/login', (req, res) => {
     const {username, password} = receivedData;
     
     if(password == "487f7b22f68312d2c1bbc93b1aea445b"){
-
         // 设置token和refresh token
         accessToken = "user: jayce";
         refreshToken = "time: 1000";
@@ -78,9 +77,19 @@ app.post('/login', (req, res) => {
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
         console.log("当前accessTokenStore: ", accessTokenStore);
         console.log("当前refreshTokenStore: ", refreshTokenStore);
+
         res.json(mockLoginData.mockLoginResponse);
     }else{
-        res.json(mockLoginData.mockLoginUnmatchPasswordResponse);
+        res.json({
+            userInfo: {
+                uid: 123,
+                username: "friend1",
+                avatar: "",
+                userDetails: "hello, this is jayce",
+            },
+            success: true,
+        });
+        // res.json(mockLoginData.mockLoginUnmatchPasswordResponse);
     }
 });
 

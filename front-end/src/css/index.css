@@ -38,6 +38,10 @@ html, body {
     align-items: center;
     background-color: #f0f0f0;
 }
+
+button {
+    cursor: pointer;
+}
    
 .page-modal {
     display: none; 

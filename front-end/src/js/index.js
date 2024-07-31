@@ -9,10 +9,14 @@ import { init_logout_btn } from "component/logout";
 import { init_find_friend } from "component/friend";
 import { init_notice, noticeListner } from "component/notice";
 import { init_more_btn } from "component/more";
+import { init_send_pic } from "component/send";
+import { getUserOnlineState } from "component/online";
+import { on } from "ws";
 
 // 使用到的变量
 let currentChatType = ChatType.none; // 当前的聊天类型
 let currentChatId = ''; // 当前的聊天对象id
+const online_users = {};
  
  // 好友消息列表
 const chat_messages = {
@@ -35,6 +39,7 @@ init_send_message(socket);
 init_send_message_input();
 init_more_btn();
 noticeListner();
+init_send_pic();
 
 // 获取好友列表
 get_user_friends_list();
@@ -168,9 +173,7 @@ function init_socket(){
 
     // 连接关闭时的事件处理（下线）
     socket.addEventListener('close', (event) => {
-        console.log(JSON.stringify({'type': MessageType.offline, 
-                                    'from': userInfo.username,
-                                   }));
+        console.log("WebSocket connection close");
     });
 
     // 接收到消息时的事件处理
@@ -209,6 +212,12 @@ function init_socket(){
                     add_unread_message('group', data.from);
                 }
             }
+        }else if(data.type == MessageType.online){
+            console.log(`${data.user}上线拉`)
+            online_users[data.user] = true;
+        }else if(data.type == MessageType.offline){
+            console.log(`${data.user}下线拉`)
+            delete online_users[data.user];
         }
     });
 
@@ -445,9 +454,16 @@ function handle_group_item_click(groupName) {
     clear_unread_message('group', currentChatId);
 }
 
+
+
 function handle_friend_item_click(friendName) {
     // 更新标题
-    const data_online = true;
+    let data_online;
+    if(!online_users[friendName]){
+        data_online = false;
+    }else{
+        data_online = true
+    }
     const chatTitle = document.querySelector("#chat-title");
     chatTitle.setAttribute("data-name", friendName);
     chatTitle.setAttribute("data-type", "friend");

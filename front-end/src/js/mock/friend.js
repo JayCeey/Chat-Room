@@ -16,6 +16,11 @@ const mockUserFriendResponse = {
             username: "server123",
             avatar: "123",
         },
+        {
+            uid: 777,
+            username: "jaycehhh",
+            avatar: "123",
+        },
     ],
     groups: [
         {
