@@ -19,6 +19,7 @@ module.exports = {
             api: path.resolve(__dirname, 'src/js/api/'),
             mock: path.resolve(__dirname, 'src/js/mock/'),
             utils: path.resolve(__dirname, 'src/js/utils/'),
+            component: path.resolve(__dirname, 'src/js/component/'),
         }
     },
     devServer: {

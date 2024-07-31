@@ -6,48 +6,15 @@
     <title>Chat Room</title>
 </head>
 <body>
-    
-    <!-- 弹窗 -->
-    <div id="user-modal" class="page-modal">
-        <div class="modal-content">
+    <div class="page-modal">
+        <div class="modal-container">
             <span class="close-modal">&times;</span>
-            <div id="modal-header">
-                <div class="avatar user-avatar"></div>
-                <h2 class="username"></h2>
-            </div>
-            <p id="user-details"></p>
-        </div> 
-    </div>
+            <div class="modal-content">
 
-    <!-- 添加好友弹窗 -->
-    <div id="add-modal" class="page-modal">
-        <div id="find-modal-content" class="modal-content">
-            <span class="close-modal" >&times;</span>
-            <div id="find-friend">
-                <input type="text" id="input-friend-name" placeholder="请输入好友昵称">
-                <button id="find-friend-btn">查找</button>
-            </div>
-            <div id="find-friend-result">
-                <span class="find-result-title">用户</span>
-                <div id="find-user-result-list" class="find-result-list">
-                    <div class="find-result-item">
-                        <div class="avatar friend-avatar"></div>
-                        <span class="username">user1</span>
-                        <button class="add-friend-btn">添加</button>
-                    </div>
-                </div>
-                <span class="find-result-title">群组</span>
-                <div id="find-group-result-list" class="find-result-list">
-                    <div class="find-result-item">
-                        <div class="avatar friend-avatar"></div>
-                        <span class="username">user1</span>
-                        <button class="add-friend-btn">添加</button>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
-
+    
     <div id="chat-room">
         <div id="sidebar">
             <div id="logo">
@@ -80,25 +47,15 @@
                 </div>
             </div>
             <div id="messages">
-                <!--
-                <div class="message" data-username="friend1">
-                    <div class="message-left">
-                        <div class="avatar"></div>
-                        <p class="msg-left-text">Hello, how are you?</p>
-                    </div>
-                </div>
-                <div class="message" data-username="jayce">
-                    <div class="message-right">
-                        <p class="msg-right-text">I'm fine, thank you!</p>
-                        <div class="avatar"></div>
-                    </div>
-                </div>
-                -->
             </div>
             <div id="input-bar">
                 <input id="send-message-input" type="text" placeholder="Type a message...">
-                <button id="more">更多</button>
-                <button id="send-message">发送</button>
+                <button id="more-btn" class="input-btn">更多</button>
+                <div id="more">
+                    <button id="pic-btn">图片</button>
+                    <button id="seckill">秒杀</button>
+                </div>
+                <button id="send-message" class="input-btn">发送</button>
             </div>
         </div>
     </div>

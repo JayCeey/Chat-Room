@@ -1,11 +1,13 @@
 import "../css/index.css";
 import DefaultAvatar from "assets/images/default_avatar.jpg";
-import { setupWebSocket } from "./ws_connection";
 import { Type } from "utils/constant";
-import { logout } from 'api/login.js';
-import { history, getFriends } from 'api/chat.js';
-
-
+import { history } from 'api/chat';
+import { searchUser, getFriends } from 'api/friend';
+import { setupWebSocket } from "component/websocket";
+import { init_user_info } from "component/user";
+import { init_logout_btn } from "component/logout";
+import { init_find_friend } from "component/friend";
+import { init_more_btn } from "component/more";
 
 // 使用到的变量
 let currentChatType = -1; // 当前的聊天类型
@@ -23,13 +25,13 @@ const chat_messages = {
 
 // 初始化
 const userInfo = init_user_info();
-init_user_profile(userInfo); // 初始化用户信息
 init_avatars();
-init_add_button();
-init_logout_button();
+init_find_friend();
+init_logout_btn();
 const socket = init_socket();
 init_send_message(socket);
 init_send_message_input();
+init_more_btn();
 
 // 获取好友列表
 get_user_friends_list();
@@ -67,7 +69,7 @@ function get_user_friends_list(){
 }
 
 // 初始化朋友或群组列表
-function init_friend_section(type, friendInfo){
+export function init_friend_section(type, friendInfo){
     if(type == 'friend'){
         const friend_item = document.createElement('div');
         const friendName = friendInfo.username;
@@ -134,94 +136,12 @@ function get_history_messages(userInfo) {
     });
 }
 
-// 初始化用户信息
-function init_user_info(){
-    const temp_userInfo = sessionStorage.getItem("userInfo");
-    if(!temp_userInfo){
-        console.log("用户未登录");
-        alert("请先登录");
-        window.location.href = "login.html";
-    }
-    const userInfo = JSON.parse(temp_userInfo);
-    return userInfo;
-};
-
-// 初始化用户profile
-function init_user_profile(userInfo){
-    const profile = document.getElementById('profile');
-    const username = profile.querySelector(".username");
-    username.textContent = userInfo.username;
-    username.style.cursor = "pointer";
-    username.setAttribute("data-username", userInfo.username);
-    username.addEventListener("click", function(event){
-        user_info(userInfo);
-    });
-    const avatar = profile.querySelector(".avatar");
-    avatar.setAttribute("data-username", userInfo.username);
-    avatar.addEventListener("click", function(event){
-        user_info(userInfo);
-    });
-}
-
 // 对所有avatar的class类添加DefaultAvatar
 function init_avatars(){
     document.querySelectorAll('.avatar').forEach((element)=>{
         const img = document.createElement('img');
         img.src = DefaultAvatar;
         element.appendChild(img);
-    });
-}
-
-// 弹窗显示用户信息
-function user_info(userInfo) {
-    const user_modal = document.getElementById("user-modal");
-    user_modal.querySelector('.username').innerText = userInfo.username;
-    user_modal.querySelector('#user-details').innerText = userInfo.userDetails;
-    user_modal.style.display = "block";
-    const close_btn = user_modal.querySelector('.close-modal');
-    close_btn.addEventListener('click', () => {
-        user_modal.style.display = "none";
-    });
-}
-
-// 打开添加好友窗口
-function init_add_button(){
-    document.getElementById('add-button').addEventListener('click', () => {
-        const add_modal = document.getElementById('add-modal')
-        add_modal.style.display = "block";
-        const close_btn = add_modal.querySelector('.close-modal');
-        close_btn.addEventListener('click', () => {
-            add_modal.style.display = "none";
-        });
-    });
-}
-
-// 点击注销按钮，首先向服务器发送注销消息，服务器返回success注销成功
-function init_logout_button(){
-    document.getElementById('logout-button').addEventListener('click', () => {
-    
-        logout().then(response => {
-            if (!response.ok) {
-                throw new Error('网络错误：' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("返回data: ", data);
-            if(data.success){
-                // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
-                alert("登出成功！");
-                sessionStorage.clear(); // 清除登录状态
-                window.location.href = 'login.html';
-                return;
-            }else{
-                alert("登出失败：" + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('错误:' + error);
-            alert("登出失败：", error);
-        });
     });
 }
 
@@ -550,8 +470,6 @@ function handle_friend_item_click(friendName) {
 
     clear_unread_message('friend', currentChatId);
 }
-
-
 
 
 

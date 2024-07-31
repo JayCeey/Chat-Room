@@ -1,6 +1,7 @@
 
 const mockLoginData = require('./src/js/mock/login.js');
 const mockChatData = require('./src/js/mock/chat.js');
+const mockFriendData = require('./src/js/mock/friend.js');
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -105,7 +106,15 @@ app.post('/getUserFriendInfo', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
     // 响应模拟数据
-    res.json(mockChatData.mockUserFriendResponse);
+    res.json(mockFriendData.mockUserFriendResponse);
+});
+
+// 获取搜索用户列表
+app.get('/searchUser', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockFriendData.mockSearchUserVO);
 });
 
 // 获取聊天信息
