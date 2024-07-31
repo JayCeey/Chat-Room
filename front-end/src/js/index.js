@@ -4,7 +4,7 @@ import { Type } from "utils/constant";
 import { history } from 'api/chat';
 import { searchUser, getFriends } from 'api/friend';
 import { setupWebSocket } from "component/websocket";
-import { init_user_info } from "component/user";
+import { user_info, init_user_info } from "component/user";
 import { init_logout_btn } from "component/logout";
 import { init_find_friend } from "component/friend";
 import { init_more_btn } from "component/more";

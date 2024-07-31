@@ -1,6 +1,6 @@
 
 // 弹窗显示用户信息
-function user_info(userInfo) {
+export function user_info(userInfo) {
     
     const page_modal = document.querySelector(".page-modal");
     const modal_content = page_modal.querySelector(".modal-content");
