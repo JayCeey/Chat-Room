@@ -48,6 +48,7 @@ export function init_login(){
                 return;
             }else{
                 alert("登陆失败：" + data.message);
+                throw new Error(data.message);
             }
         })
         .catch(error => {

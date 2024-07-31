@@ -2,7 +2,7 @@ port = 3020;
 
 const WebSocket = require('ws');
 const server = new WebSocket.Server({ 'port': port });
-const {Type} = require('./src/js/utils/constant.js');
+const { MessageType } = require('./src/js/utils/constant.js');
 
 const users = {}; // 用户列表，用于存储用户ID和对应的WebSocket连接
 
@@ -17,11 +17,11 @@ server.on('connection', (ws) => {
         
         data_type = parseInt(data.type);
 
-        if(data_type == Type.message_friend){
+        if(data_type == MessageType.message_friend){
             console.log("message friend");
             ws.send(
                 JSON.stringify({
-                    'type': Type.message_friend,
+                    'type': MessageType.message_friend,
                     'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
@@ -31,7 +31,7 @@ server.on('connection', (ws) => {
             );
             ws.send(
                 JSON.stringify({
-                    'type': Type.message_group,
+                    'type': MessageType.message_group,
                     'from': "server123",
                     'to': data.from,
                     'content': 'this is server annoncement!!!',
@@ -39,11 +39,11 @@ server.on('connection', (ws) => {
                     'latestMsg': 3, // 最新的版本
                 })
             );
-        }else if(data_type == Type.message_group){
+        }else if(data_type == MessageType.message_group){
             console.log("message group");
             ws.send(
                 JSON.stringify({
-                    'type': Type.message_group,
+                    'type': MessageType.message_group,
                     'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
@@ -53,7 +53,7 @@ server.on('connection', (ws) => {
             );
             ws.send(
                 JSON.stringify({
-                    'type': Type.message_friend,
+                    'type': MessageType.message_friend,
                     'from': "server123",
                     'to': data.from,
                     'content': 'this is server annoncement!!!',
@@ -61,18 +61,18 @@ server.on('connection', (ws) => {
                     'latestMsg': 3, // 最新的版本
                 })
             );
-        }else if(data_type == Type.online){
+        }else if(data_type == MessageType.online){
             console.log("user online: ", data.from);
             // 向客户端发送消息
             ws.send(
                 JSON.stringify({
-                    'type': Type.message,
+                    'type': MessageType.message,
                     'from': 'jayce',
                     'content': 'hello!!',
                     'timestamp': new Date().toISOString(),
                 })
             ); 
-        }else if(data_type == Type.offline){
+        }else if(data_type == MessageType.offline){
             console.log("user offline: ", data.from);
         }
     });

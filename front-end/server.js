@@ -2,6 +2,7 @@
 const mockLoginData = require('./src/js/mock/login.js');
 const mockChatData = require('./src/js/mock/chat.js');
 const mockFriendData = require('./src/js/mock/friend.js');
+const mockSuccessData = require('./src/js/mock/success.js');
 const http = require('http');
 const express = require('express');
 const cors = require('cors');
@@ -45,10 +46,10 @@ app.use(cors(corsOptions)); // 使用 cors 包代替手动设置头部
 // 配置静态文件目录
 app.use('/images', express.static(path.join(__dirname, '/src/assets/images')));
 
-
+// 模拟数据库/redis存储
 let accessTokenStore = {};
 let refreshTokenStore = {};
-
+let chat_messages = {};
 
 // 定义一个POST 请求路由
 app.post('/login', (req, res) => {
@@ -60,7 +61,6 @@ app.post('/login', (req, res) => {
     const {username, password} = receivedData;
     
     if(password == "487f7b22f68312d2c1bbc93b1aea445b"){
-        
 
         // 设置token和refresh token
         accessToken = "user: jayce";
@@ -124,6 +124,39 @@ app.post('/getUserChatInfo', (req, res) => {
     // 响应模拟数据
     res.json(mockChatData.mockUserChatResponse);
 });
+
+// 添加好友
+app.post('/addFriend', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 获取最新消息
+app.post('/getLatestNotice', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockChatData.mockUserChatResponse);
+});
+
+app.get('/notice', (req, res) => {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+  
+    setInterval(() => {
+      const notification = {
+        "notice_title": "新消息",
+        "notice_content": "你有新的消息",
+        "notice_sender": "服务器",
+        "timestamp": new Date(),
+      };
+      res.write(`data: ${JSON.stringify(notification)}\n\n`);},
+      10000);
+  });
+
 
 // 启动服务器
 app.listen(port, () => {

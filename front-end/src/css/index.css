@@ -101,6 +101,54 @@ html, body {
     font-size: 20px;
 }
 
+#notice-modal-content {
+    height: 300px;
+}
+
+#notice-list {
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.notice-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height: 130px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 0 20px 0 20px;
+    margin-bottom: 10px;
+}
+
+.notice-title-container {
+    display: flex;
+    justify-content: left;
+    height: 24px;
+    margin-bottom: 14px;
+}
+
+.notice-timestamp {
+    margin-left: 24px;
+    font-size: 16px;
+    color: gray;
+    display: flex;
+    align-items: flex-end;
+}
+
+.notice-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.notice-content {
+    font-size: 16px;
+}
+
+.notice-sender{
+    margin-left: auto;
+}
+
 #find-modal-content {
     height: 400px;
 }
@@ -177,8 +225,9 @@ html, body {
 }
 
 .find-result-item:hover {
-    border: 1px solid #ccc;
+    border: 3px solid #777777;
     transform: scale(1.02);
+    background-color: #ccc;
 }
 
 .add-friend-btn {
@@ -188,10 +237,35 @@ html, body {
     text-align: center;
     border: 1px solid #ccc;
     font-size: 16px;
-    background-color: #4CAF50;
     color: white;
     margin-left: auto;
     cursor: pointer;
+}
+
+.add-friend-btn[data-click="true"]:hover {
+    background-color: #3e8e41;
+}
+
+.add-friend-btn[data-click="true"] {
+    background-color: #4CAF50;
+}
+
+.add-friend-btn[data-click="false"] {
+    background-color: #777777;
+}
+
+.head-btn {
+    display: flex;
+    justify-content: left;
+}
+
+#new-notice {
+    display: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
 }
 
 #chat-room {
@@ -380,10 +454,11 @@ html, body {
 }
 
 #chat-button-right {
-    display: inline-block;
+    display: flex;
+    justify-content: left;
+    align-items: center;
     margin-left: auto;
     margin-right: 10px;
-    gap: 50px;
     font-size: 20px;
     color: #555;
 }

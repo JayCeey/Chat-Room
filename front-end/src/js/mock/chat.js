@@ -1,5 +1,4 @@
-
-const {Type} = require("../utils/constant.js");
+const {MessageType} = require("../utils/constant.js");
 
 
 const mockLoginResponse = {
@@ -16,7 +15,7 @@ const mockUserChatResponse = {
     chats: [
         {
             name: "group1",
-            type: Type.message_group,
+            type: MessageType.message_group,
             history: [
                 { content: "hello", from: "group1", to: "jaycehhh", time: "2022-01-01 12:00:00" },
                 { content: "how are you", from: "jaycehhh", to: "group1", time: "2022-01-01 12:01:00" },
@@ -25,7 +24,7 @@ const mockUserChatResponse = {
         },
         {
             name: "friend1",
-            type: Type.message_friend,
+            type: MessageType.message_friend,
             history: [
                 { content: "this is ", from: "friend1", to: "jaycehhh", time: "2022-01-01 12:00:00" },
                 { content: "fuck you", from: "jaycehhh", to: "friend1", time: "2022-01-01 12:01:00" },
@@ -37,7 +36,6 @@ const mockUserChatResponse = {
 };
 
 module.exports = { 
-    mockLoginResponse,
-    mockUserFriendResponse, 
-    mockUserChatResponse 
+    mockLoginResponse, 
+    mockUserChatResponse,
 };

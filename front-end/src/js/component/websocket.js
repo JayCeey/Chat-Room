@@ -1,9 +1,5 @@
-import { Type } from "utils/constant";
-import DefaultAvatar from "assets/images/default_avatar.jpg";
-
 // 建立websocket通信
 // 创建一个 WebSocket 连接
-
 export function setupWebSocket() {
 
     try{

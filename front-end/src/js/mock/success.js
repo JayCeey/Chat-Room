@@ -4,8 +4,8 @@ const mockSuccess = {
 };  
 
 const mockFail = {
-    success: fail,
-    message: "错误响应"
+    success: false,
+    message: "错误响应",
 };
 
 module.exports = {
