@@ -1,6 +1,6 @@
-import "../css/index.css";
+import "css/index.scss";
 import DefaultAvatar from "assets/images/default_avatar.jpg";
-import { MessageType, ChatType } from "utils/constant";
+import { MESSAGE_TYPE, CHAT_TYPE } from "utils/constant";
 import { history } from 'api/chat';
 import { getFriends } from 'api/friend';
 import { setupWebSocket } from "component/websocket";
@@ -10,11 +10,9 @@ import { init_find_friend } from "component/friend";
 import { init_notice, noticeListner } from "component/notice";
 import { init_more_btn } from "component/more";
 import { init_send_pic } from "component/send";
-import { getUserOnlineState } from "component/online";
-import { on } from "ws";
 
 // 使用到的变量
-let currentChatType = ChatType.none; // 当前的聊天类型
+let currentChatType = CHAT_TYPE.NONE; // 当前的聊天类型
 let currentChatId = ''; // 当前的聊天对象id
 const online_users = {};
  
@@ -130,10 +128,10 @@ function get_history_messages(userInfo) {
 
         for(let i = 0; i < chats.length; i++) {
             let chat = chats[i];
-            if(chat.type == MessageType.message_friend){
+            if(chat.type == MESSAGE_TYPE.MESSAGE_FRIEND){
                 init_chat_info('friend', chat['name']);
                 chat_messages['friend'][chat['name']]['history'] = chat.history;
-            }else if(chat.type == MessageType.message_group){
+            }else if(chat.type == MESSAGE_TYPE.MESSAGE_GROUP){
                 init_chat_info('group', chat['name']);
                 chat_messages['group'][chat['name']]['history'] = chat.history;
             }
@@ -166,7 +164,7 @@ function init_socket(){
     socket.addEventListener('open', (event) => {
         console.log('WebSocket connection established');
         // 向服务器发送消息
-        socket.send(JSON.stringify({'type': MessageType.online, 
+        socket.send(JSON.stringify({'type': MESSAGE_TYPE.ONLINE, 
                                     'from': userInfo.username,
                                     }));
     });
@@ -181,7 +179,7 @@ function init_socket(){
         const data = JSON.parse(event.data);
         console.log(`Message from server:`, data);
 
-        if(data.type == MessageType.message_friend){
+        if(data.type == MESSAGE_TYPE.MESSAGE_FRIEND){
             const messageText = data.content; //  挂载到左侧用户发送的消息栏上
             if (messageText) {
                 if(!chat_messages['friend'][data.from]){
@@ -189,7 +187,7 @@ function init_socket(){
                 }
 
                 add_message_to_chatlist('friend', data.from, messageText, data.timestamp);
-                if(currentChatType == ChatType.friend && currentChatId == data.from){
+                if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.from){
                     // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
                     add_message(1, data.from, messageText);
                 }else{
@@ -197,7 +195,7 @@ function init_socket(){
                     add_unread_message('friend', data.from);
                 }
             }
-        }else if(data.type == MessageType.message_group){
+        }else if(data.type == MESSAGE_TYPE.MESSAGE_GROUP){
             const messageText = data.content; //  挂载到左侧用户发送的消息栏上
             if (messageText) {
                 if(!chat_messages['group'][data.from]){
@@ -205,17 +203,17 @@ function init_socket(){
                 }
 
                 add_message_to_chatlist('group', data.from, messageText, data.timestamp);
-                if(currentChatType == ChatType.group && currentChatId == data.from){
+                if(currentChatType == CHAT_TYPE.GROUP && currentChatId == data.from){
                     add_message(1, data.from, messageText);
                 }else{
                     // 不是当前窗口的，那么就添加到未读消息中
                     add_unread_message('group', data.from);
                 }
             }
-        }else if(data.type == MessageType.online){
+        }else if(data.type == MESSAGE_TYPE.ONLINE){
             console.log(`${data.user}上线拉`)
             online_users[data.user] = true;
-        }else if(data.type == MessageType.offline){
+        }else if(data.type == MESSAGE_TYPE.OFFLINE){
             console.log(`${data.user}下线拉`)
             delete online_users[data.user];
         }
@@ -367,7 +365,7 @@ function add_message(type, from, messageText){
 // 监听消息发送按钮的点击事件
 function init_send_message(socket){
     document.getElementById('send-message').addEventListener('click', () => {
-        if(currentChatType == ChatType.none){
+        if(currentChatType == CHAT_TYPE.NONE){
             alert("请选择一名聊天对象！");
             return;
         }
@@ -387,9 +385,9 @@ function init_send_message(socket){
             add_message(0, userInfo.username, messageText);
 
             let type;
-            if(currentChatType == ChatType.friend){
+            if(currentChatType == CHAT_TYPE.FRIEND){
                 type = "friend";
-            }else if(currentChatType == ChatType.group){
+            }else if(currentChatType == CHAT_TYPE.GROUP){
                 type = "group";   
             }
  
@@ -446,7 +444,7 @@ function handle_group_item_click(groupName) {
         user_info(userInfo);
     });
 
-    currentChatType = ChatType.group; // 当前聊天类型为群组聊天
+    currentChatType = CHAT_TYPE.GROUP; // 当前聊天类型为群组聊天
     currentChatId = groupName;
     const chatInfo = chat_messages['group'][currentChatId]['history'];
     load_messages(chatInfo);
@@ -482,7 +480,7 @@ function handle_friend_item_click(friendName) {
         user_info(userInfo);
     });
     
-    currentChatType = ChatType.friend; // 当前聊天类型为好友聊天
+    currentChatType = CHAT_TYPE.FRIEND; // 当前聊天类型为好友聊天
     currentChatId = friendName;
     const chatInfo = chat_messages['friend'][currentChatId]['history'];
     load_messages(chatInfo);

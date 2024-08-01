@@ -1,4 +1,4 @@
-import config from '../config.js';
+import CONFIG from '../config.js';
  
 let noticeList = [];
 let unread_cnt = 0;
@@ -41,7 +41,7 @@ export function init_notice(){
 
 // 监听服务器是否发送消息回来
 export function noticeListner(){
-    const eventSource = new EventSource(`${config.BASE_URL}/notice`);
+    const eventSource = new EventSource(`${CONFIG.BASE_URL}/notice`);
     eventSource.onmessage = (event) => {
         console.log(`收到服务器通知: ${event.data}`);
         const data = JSON.parse(event.data)

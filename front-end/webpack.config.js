@@ -2,6 +2,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: {
@@ -15,6 +16,7 @@ module.exports = {
     mode: 'development',
     resolve: {
         alias: {
+            css: path.resolve(__dirname, 'src/css/'),
             assets: path.resolve(__dirname, 'src/assets'),
             api: path.resolve(__dirname, 'src/js/api/'),
             mock: path.resolve(__dirname, 'src/js/mock/'),
@@ -52,6 +54,12 @@ module.exports = {
                 use: ['style-loader', 'css-loader'],
             },
             {
+                test: /\.scss$/i,
+                use: ['style-loader', 
+                      'css-loader', 
+                      'sass-loader'],
+            },
+            {
                 test: /\.(png|svg|jpg|jpeg|gif)$/i,
                 // type: 'asset/resource',
                 use: ['file-loader'],
@@ -68,6 +76,9 @@ module.exports = {
             template: './src/views/index.html',
             filename: 'index.html',
             chunks: ['index'],
+        }),
+        new MiniCssExtractPlugin({
+            filename: '[name].style.css' // 生成的 CSS 文件名
         }),
     ],
 };

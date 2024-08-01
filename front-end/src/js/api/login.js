@@ -1,7 +1,7 @@
-import config from '../config.js';
+import CONFIG from '../config.js';
 
 export function login(loginRequest){
-    return fetch(`${config.BASE_URL}/login`, {
+    return fetch(`${CONFIG.BASE_URL}/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ export function login(loginRequest){
 };
 
 export function logout(){
-    return fetch(`${config.BASE_URL}/logout`, {
+    return fetch(`${CONFIG.BASE_URL}/logout`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

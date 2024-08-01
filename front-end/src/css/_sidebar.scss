@@ -1,0 +1,123 @@
+#sidebar {
+    width: 20%;
+    background-color: #e6e6e6;
+    padding: 0px 30px 30px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 50px 0px 0px 50px;
+}
+
+#logo {
+    display: flex;
+    padding: 10px 5px 10px 5px;
+}
+
+#profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-left: 10px;
+    height: 50px;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: #3b5998;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+
+#profile-section {
+    display: flex;
+    flex-direction: column;
+
+    .username {
+        font-weight: bold;
+        font-size: 24px;
+        margin-left: 10px;
+        transition: transform 0.3s ease;
+
+        &:hover {
+            font-weight: bold;
+            color:deepskyblue;
+            font-size: 24px;
+            margin-left: 10px;
+            transform: scale(1.2);
+        }
+    }
+}
+
+.section-title {
+    margin-bottom: 10px;
+    text-align: center;
+    color: #8b8b8b;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#group, #friend {
+    background-color: #d1d1d1;
+    padding: 5px;
+    border-radius: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 320px;
+    padding: 15px;
+    overflow-y: auto;
+    border-radius: 20px;
+}
+
+.group-item, .friend-item{
+    display: flex;
+    justify-content: left;
+    font-size: 16px;
+    color:#555;
+    cursor: pointer;
+    align-items: center;
+    height: 30px;
+    transition: transform 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
+    border: 3px solid transparent;
+    border-radius: 10px;
+
+    &:hover {
+        transform: scale(1.1);
+        border-color: #8f8f8f;
+    }
+}
+
+.unread-msg {
+    margin-left: auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+    text-align: center;
+    color: white;
+    font-size: 11px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: transform 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        border-color: #8f8f8f;
+    }
+}
+
+.group-avatar, .friend-avatar {
+    width: 30px;
+    height: 30px;
+    background-color: #3b5998;
+    border-radius: 50%;
+    margin-right: 10px;
+}

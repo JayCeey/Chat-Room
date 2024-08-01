@@ -2,7 +2,7 @@ port = 3020;
 
 const WebSocket = require('ws');
 const server = new WebSocket.Server({ 'port': port });
-const { MessageType } = require('./src/js/utils/constant.js');
+const { MESSAGE_TYPE } = require('./src/js/utils/constant.js');
 const { userOnline, userOffline} = require('./src/js/component/online.js');
 
 // 存储所有连接
@@ -34,14 +34,14 @@ server.on('connection', (ws) => {
         
         data_type = parseInt(data.type);
 
-        if(data_type == MessageType.message_friend){
+        if(data_type == MESSAGE_TYPE.MESSAGE_FRIEND){
             console.log("message friend");
             let ws_ = online_users[data.to];
             if(ws_){
                 console.log(`${data.to}在线！发送消息`)
                 ws_.send(
                     JSON.stringify({
-                        'type': MessageType.message_friend,
+                        'type': MESSAGE_TYPE.MESSAGE_FRIEND,
                         'from': data.from,
                         'to': data.to,
                         'content': data.content,
@@ -55,7 +55,7 @@ server.on('connection', (ws) => {
             /* 
             ws.send(
                 JSON.stringify({
-                    'type': MessageType.message_friend,
+                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
                     'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
@@ -65,7 +65,7 @@ server.on('connection', (ws) => {
             );
             ws.send(
                 JSON.stringify({
-                    'type': MessageType.message_group,
+                    'type': MESSAGE_TYPE.MESSAGE_GROUP,
                     'from': "server123",
                     'to': data.from,
                     'content': 'this is server annoncement!!!',
@@ -74,11 +74,11 @@ server.on('connection', (ws) => {
                 })
             );
             */
-        }else if(data_type == MessageType.message_group){
+        }else if(data_type == MESSAGE_TYPE.MESSAGE_GROUP){
             console.log("message group");
             ws.send(
                 JSON.stringify({
-                    'type': MessageType.message_group,
+                    'type': MESSAGE_TYPE.MESSAGE_GROUP,
                     'from': data.to,
                     'to': data.from,
                     'content': 'received: ' + data.content,
@@ -88,7 +88,7 @@ server.on('connection', (ws) => {
             );
             ws.send(
                 JSON.stringify({
-                    'type': MessageType.message_friend,
+                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
                     'from': "server123",
                     'to': data.from,
                     'content': 'this is server annoncement!!!',
@@ -96,20 +96,20 @@ server.on('connection', (ws) => {
                     'latestMsg': 3, // 最新的版本
                 })
             );
-        }else if(data_type == MessageType.online){
+        }else if(data_type == MESSAGE_TYPE.ONLINE){
             console.log("user online: ", data.from);
             user = data.from;
             online_users[user] = ws;
             // 向客户端发送消息
             ws.send(
                 JSON.stringify({
-                    'type': MessageType.message,
+                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
                     'from': 'jayce',
                     'content': 'hello!!',
                     'timestamp': new Date().toISOString(),
                 })
             );
-            informUsers(user, MessageType.online);
+            informUsers(user, MESSAGE_TYPE.ONLINE);
         }
     });
 
@@ -117,7 +117,7 @@ server.on('connection', (ws) => {
     ws.on('close', () => {
         console.log('Client disconnected');
         delete online_users[user];
-        informUsers(user, MessageType.offline);
+        informUsers(user, MESSAGE_TYPE.OFFLINE);
     });
 
     // 处理错误事件

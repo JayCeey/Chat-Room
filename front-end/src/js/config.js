@@ -1,6 +1,6 @@
 // config.js
-const config = {
+const CONFIG = {
     BASE_URL: 'http://localhost:3000',
   };
   
-export default config;
+export default CONFIG;

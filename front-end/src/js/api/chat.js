@@ -1,7 +1,7 @@
-import config from '../config.js';
+import CONFIG from '../config.js';
 
 export function history(userInfo){
-    return fetch(`${config.BASE_URL}/getUserChatInfo`, {
+    return fetch(`${CONFIG.BASE_URL}/getUserChatInfo`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

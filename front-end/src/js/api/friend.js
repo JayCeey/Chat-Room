@@ -1,7 +1,7 @@
-import config from '../config.js';
+import CONFIG from '../config.js';
 
 export function getFriends(userInfo){
-    return fetch(`${config.BASE_URL}/getUserFriendInfo`, {
+    return fetch(`${CONFIG.BASE_URL}/getUserFriendInfo`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -12,7 +12,7 @@ export function getFriends(userInfo){
 }
 
 export function sendFriendRequest(addFriendVO){
-    return fetch(`${config.BASE_URL}/addFriend`, {
+    return fetch(`${CONFIG.BASE_URL}/addFriend`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

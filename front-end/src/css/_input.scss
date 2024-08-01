@@ -1,0 +1,62 @@
+.avatar {
+    border-radius: 50%;
+
+    img {
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        border: 3px solid black;
+    }
+}
+
+#input-bar {
+    display: flex;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    gap: 10px;
+    height: 80px;
+
+    input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 20px;
+    }
+}
+
+.input-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3b5998;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+#more {
+    flex-direction: row;
+    position: absolute;
+    bottom: 80px; /* 在按钮上方显示 */
+    left: 85%;
+    transform: translateX(-50%);
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 20px;
+    width: 250px;
+    height: 70px;
+    padding: 20px 10px 10px 20px;
+    display: none;
+
+    button {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background-color: #aaa;
+        color: white;
+        margin-right: 20px;
+    }
+}

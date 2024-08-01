@@ -1,0 +1,15 @@
+@import 'base';
+@import 'modal';
+@import 'sidebar';
+@import 'main-chat';
+@import 'chat-header';
+@import 'input';
+
+html{
+    @include scrollbar;
+}
+
+html, body {
+    @include main;
+}
+

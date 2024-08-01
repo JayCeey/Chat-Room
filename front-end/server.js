@@ -15,8 +15,6 @@ const port = 3000;
 const app = express();
 const server = http.createServer(app);
 
-
-
 // 使用cookieParser中间件
 app.use(cookieParser());
 
@@ -24,10 +22,10 @@ app.use(cookieParser());
 app.use(express.json());
 
 // 允许跨域
-const allowedOrigins = ['http://localhost:3010']; // 将允许的来源列入白名单
+const allowedOrigins = [/^http:\/\/localhost:\d+$/]; // 将允许的来源列入白名单
 const corsOptions = {
     origin: function (origin, callback) {
-        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        if (allowedOrigins.some(pattern => new RegExp(pattern).test(origin)) || !origin) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));

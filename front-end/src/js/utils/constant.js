@@ -1,14 +1,14 @@
-const MessageType = {
-    message_friend: 0,
-    message_group: 1,
-    online: 2,
-    offline: 3,
+const MESSAGE_TYPE = {
+    MESSAGE_FRIEND: 0,
+    MESSAGE_GROUP: 1,
+    ONLINE: 2,
+    OFFLINE: 3,
 };
 
-const ChatType = {
-    none: -1,
-    friend: 0,
-    group: 1,
+const CHAT_TYPE = {
+    NONE: -1,
+    FRIEND: 0,
+    GROUP: 1,
 };
 
 const ADD_FRIEND_TYPE = {
@@ -43,8 +43,8 @@ const USER_TYPE = {
 }
 
 module.exports = {    
-    MessageType,
-    ChatType,
+    MESSAGE_TYPE,
+    CHAT_TYPE,
     ADD_FRIEND_TYPE,
     ADD_GROUP_TYPE,
     NOTICE_TYPE,
