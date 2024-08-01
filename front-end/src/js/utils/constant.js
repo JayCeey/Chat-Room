@@ -3,13 +3,21 @@ const MESSAGE_TYPE = {
     MESSAGE_GROUP: 1,
     ONLINE: 2,
     OFFLINE: 3,
+    ASK_ONLINE: 4,
+    RESPOND_ONLINE: 5,
 };
 
 const CHAT_TYPE = {
-    NONE: -1,
-    FRIEND: 0,
-    GROUP: 1,
+    NONE: 'none',
+    FRIEND: 'friend',
+    GROUP: 'group',
+    ADMIN: 'admin',
 };
+
+const USER_STATE = {
+    ONLINE: 'online',
+    OFFLINE: 'offline',
+}
 
 const ADD_FRIEND_TYPE = {
     REQUEST: 0,
@@ -42,6 +50,11 @@ const USER_TYPE = {
     ADMIN: 3,
 }
 
+const SEND_TYPE = {
+    SELF: 0,
+    OTHER: 1,
+}
+
 module.exports = {    
     MESSAGE_TYPE,
     CHAT_TYPE,
@@ -49,4 +62,6 @@ module.exports = {
     ADD_GROUP_TYPE,
     NOTICE_TYPE,
     USER_TYPE,
+    SEND_TYPE,
+    USER_STATE,
 };

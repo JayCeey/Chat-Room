@@ -3,7 +3,6 @@ port = 3020;
 const WebSocket = require('ws');
 const server = new WebSocket.Server({ 'port': port });
 const { MESSAGE_TYPE } = require('./src/js/utils/constant.js');
-const { userOnline, userOffline} = require('./src/js/component/online.js');
 
 // 存储所有连接
 const online_users = {
@@ -11,7 +10,6 @@ const online_users = {
 }
 
 function informUsers(user, type){
-    console.log(`在线users: ${online_users}`)
     Object.keys(online_users).forEach(key => {
         let ws_ = online_users[key];
         ws_.send(JSON.stringify({
@@ -110,6 +108,23 @@ server.on('connection', (ws) => {
                 })
             );
             informUsers(user, MESSAGE_TYPE.ONLINE);
+        }else if(data_type == MESSAGE_TYPE.ASK_ONLINE){
+            // 客户端询问服务端这些用户是否在线
+            const ask_online_users = data.users;
+            let online_users_list = [];
+            for(let i = 0; i < ask_online_users.length; i++){
+                let user = ask_online_users[i];
+                if(online_users[user]){
+                    online_users_list.push(user);
+                }
+            }
+
+            ws.send(
+                JSON.stringify({
+                    'type': MESSAGE_TYPE.RESPOND_ONLINE,
+                    'online_users': online_users_list,
+                })
+            )
         }
     });
 

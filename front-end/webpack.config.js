@@ -16,6 +16,7 @@ module.exports = {
     mode: 'development',
     resolve: {
         alias: {
+            public: path.resolve(__dirname, 'src/public/'),
             css: path.resolve(__dirname, 'src/css/'),
             assets: path.resolve(__dirname, 'src/assets'),
             api: path.resolve(__dirname, 'src/js/api/'),
@@ -26,7 +27,7 @@ module.exports = {
     },
     devServer: {
         static: {
-            directory: "./src/views",  // 静态文件目录
+            directory: "src/public",  // 静态文件目录
         },
         compress: true,
         port: 3010,

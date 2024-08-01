@@ -58,7 +58,7 @@ app.post('/login', (req, res) => {
 
     const {username, password} = receivedData;
     
-    if(password == "487f7b22f68312d2c1bbc93b1aea445b"){
+    if(username == 'jaycehhh'){
         // 设置token和refresh token
         accessToken = "user: jayce";
         refreshToken = "time: 1000";

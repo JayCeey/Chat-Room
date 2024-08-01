@@ -1,10 +1,10 @@
 import CONFIG from '../config.js';
  
 let noticeList = [];
-let unread_cnt = 0;
+let unreadCnt = 0;
 
 // 打开添加好友窗口
-export function init_notice(){
+export function initNotice(){
     document.getElementById('notice-button').addEventListener('click', () => {
         const page_modal = document.querySelector(".page-modal");
         const modal_content = page_modal.querySelector(".modal-content");
@@ -22,7 +22,7 @@ export function init_notice(){
                 <div class="notice-item">
                     <div class="avatar notice-avatar"></div>
                     <div class="notice-title-container">
-                        <span class="notice-title">${notice["notice_title"]}</span>
+                        <span class="notice-title">${notice.notice_title}</span>
                         <div class="notice-timestamp">${notice.timestamp}</div>
                     </div>
                     <div class="notice-content">${notice.notice_content}</div>
@@ -40,7 +40,7 @@ export function init_notice(){
 };
 
 // 监听服务器是否发送消息回来
-export function noticeListner(){
+export function initNoticeListner(){
     const eventSource = new EventSource(`${CONFIG.BASE_URL}/notice`);
     eventSource.onmessage = (event) => {
         console.log(`收到服务器通知: ${event.data}`);
@@ -51,11 +51,11 @@ export function noticeListner(){
 }
 
 function addUnreadNotice(){
-    unread_cnt += 1;
+    unreadCnt += 1;
     document.querySelector('#new-notice').style.display = "block";
 }
 
 function clear_unread_message(){
-    unread_cnt = 0;
+    unreadCnt = 0;
     document.querySelector('#new-notice').style.display = "none";
 }

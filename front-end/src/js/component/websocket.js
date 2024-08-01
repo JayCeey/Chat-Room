@@ -1,18 +1,78 @@
+import { getUserInfo } from "component/user";
+import { handleMessage } from "component/message";
+import { handleOnline, handleOffline, handleRespondOnline } from "component/online";
+import { MESSAGE_TYPE, CHAT_TYPE } from "utils/constant";
+
+let socket = null;
+const messageQueue = [];
+
 // 建立websocket通信
-// 创建一个 WebSocket 连接
-export function setupWebSocket() {
+export function initWebsocket() {
 
     try{
-        const socket = new WebSocket('ws://localhost:3020');
-    
-        // 发生错误时的事件处理
-        socket.addEventListener('error', (error) => {
-            console.error('WebSocket error:', error);
+        socket = new WebSocket('ws://localhost:3020');
+
+        // 连接打开时的事件处理（上线时请求历史消息）
+        socket.addEventListener('open', (event) => {
+            console.log('WebSocket connection established');
+
+            const userInfo = getUserInfo();
+            // 向服务器发送上线消息
+            sendMessage({'type': MESSAGE_TYPE.ONLINE, 
+                         'from': userInfo.username,});
+
+            while(messageQueue.length > 0){
+                sendMessage(messageQueue.shift());
+            }
         });
 
-        return {'socket': socket, 'error': null};
+        // 连接关闭时的事件处理（下线）
+        socket.addEventListener('close', (event) => {
+            console.log("WebSocket connection close");
+        });
+
+        // 接收到消息时的事件处理
+        socket.addEventListener('message', (event) => {
+            const data = JSON.parse(event.data);
+            console.log(`Message from server:`, data);
+            onMessage(data);
+        });
+
+        // 发生错误时的事件处理
+        socket.addEventListener('error', (error) => {
+            throw new Error('WebSocket error: ' + error);
+        });
     }catch(error){
         console.error('WebSocket error:', error);
-        return {'socket': null, 'error': error};
     }
 };
+
+function onMessage(data){
+    if(data.type == MESSAGE_TYPE.MESSAGE_FRIEND){
+        handleMessage(CHAT_TYPE.FRIEND, data);
+    }else if(data.type == MESSAGE_TYPE.MESSAGE_GROUP){
+        handleMessage(CHAT_TYPE.GROUP, data);
+    }else if(data.type == MESSAGE_TYPE.ONLINE){
+        handleOnline(data.user);
+    }else if(data.type == MESSAGE_TYPE.OFFLINE){
+        handleOffline(data.user);
+    }else if(data.type == MESSAGE_TYPE.RESPOND_ONLINE){
+        handleRespondOnline(data.online_users);
+    }
+}
+
+export function sendMessage(data){
+    if(socket.readyState == WebSocket.OPEN){
+        socket.send(JSON.stringify(data));
+    }else{
+        console.error('WebSocket is not open. ReadyState: ' + socket.readyState);
+        messageQueue.push(data);
+    }
+}
+
+export function getFriendsOnlineState(users){
+    sendMessage({
+        type: MESSAGE_TYPE.ASK_ONLINE,
+        users: users,
+    });
+}

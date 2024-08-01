@@ -1,9 +1,7 @@
-
 import {login} from 'api/login.js';
 import md5 from 'utils/encrypt.js';
 
-
-export function init_login(){
+export function initLogin(){
     document.getElementById('login-form').addEventListener('submit', function(event) {
         event.preventDefault(); // 阻止默认表单提交行为
     
