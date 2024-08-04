@@ -167,11 +167,32 @@ app.post('/getUserFriendInfo', (req, res) => {
 });
 
 // 获取搜索用户列表
-app.get('/searchUser', (req, res) => {
-    const receivedData = req.body;
+app.get('/search', (req, res) => {
+    const receivedData = req.query;
     console.log('Received data:', receivedData);
     // 响应模拟数据
-    res.json(mockFriendData.mockSearchUserVO);
+    const responseData = {
+        friends: [],
+        groups: [],
+        success: true,
+    }
+
+    const queryName = receivedData.queryName;
+
+    // 查找是否有符合名字前缀的用户和组别
+    Object.keys(database.user_info).forEach(userId => {
+        if (database.user_info[userId].username.startsWith(queryName)) {
+            responseData.friends.push(database.user_info[userId]);
+        }
+    });
+
+    Object.keys(database.group_info).forEach(groupId => {
+        if (database.group_info[groupId].groupName.startsWith(queryName)) {
+            responseData.groups.push(database.group_info[groupId]);
+        }
+    });
+
+    res.json(responseData);
 });
 
 // 获取聊天信息
@@ -211,7 +232,7 @@ app.post('/getUserChatInfo', (req, res) => {
 });
 
 // 添加好友
-app.post('/addFriend', (req, res) => {
+app.post('/add', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
     // 响应模拟数据

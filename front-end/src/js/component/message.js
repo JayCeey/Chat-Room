@@ -66,7 +66,7 @@ export async function initSendMessage(){
 
             addMessage(SEND_TYPE.SELF, userInfo, messageText);
 
-            addMessage2ChatMessages(currentChatType, userInfo.userId, currentChatId, messageText, timestamp);
+            addMessage2ChatMessages(currentChatType, data);
 
             input.value = '';
         }
@@ -119,14 +119,18 @@ export async function loadMessages(messageInfoList){
 }
 
 // 添加到消息列表中
-async function addMessage2ChatMessages(chatType, fromUserId, toUserId, messageText, timestamp){
+async function addMessage2ChatMessages(chatType, data){
     const userInfo = await getUserInfo({userId: -1});
 
     let chatId;
-    if(fromUserId == userInfo.userId){
-        chatId = toUserId;
+    if(data.from == userInfo.userId){
+        chatId = data.to;
     }else{
-        chatId = fromUserId;
+        if(chatType == CHAT_TYPE.GROUP){
+            chatId = data.group;
+        }else if(chatType == CHAT_TYPE.FRIEND){
+            chatId = data.from;
+        }
     }
 
     if(!checkChatInfo(chatType, chatId)){
@@ -135,9 +139,9 @@ async function addMessage2ChatMessages(chatType, fromUserId, toUserId, messageTe
 
     chatMessages[chatType][chatId]['history'].push({
         msgId: -1,
-        msgContent: messageText,
-        senderId: fromUserId,
-        msgCreateTime: timestamp,
+        msgContent: data.content,
+        senderId: data.from,
+        msgCreateTime: data.timestamp,
         status: 0,
     });
 
@@ -147,62 +151,44 @@ async function addMessage2ChatMessages(chatType, fromUserId, toUserId, messageTe
 async function addRightMessage(userInfo, messageText){
     const messages = document.querySelector('#messages');
     const message = document.createElement('div');
-    message.classList.add('message');
-    message.setAttribute("data-userId", userInfo.userId);
-
-    const message_right = document.createElement('div');
-    message_right.classList.add('message-right');
-
-    const text = document.createElement('p');
-    text.classList.add('msg-right-text');
-    text.textContent = messageText;
-
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar');
-    avatar.addEventListener('click', () => {
+    message.className = 'message';
+    message.setAttribute('data-userId', userInfo.userId);
+    message.innerHTML += `
+        <div class="message-right">
+            <p class="msg-right-text">
+                ${messageText}
+            </p>
+            <div class="avatar">
+                <img src=${userInfo.userAvatar}>
+            </div>
+        </div>
+    `;
+    message.querySelector('.avatar').addEventListener('click', () => {
         showInfoModal(userInfo, ITEM_TYPE.USER);
-    })
-
-    const img = document.createElement('img');
-    img.src = userInfo.userAvatar;
-
+    });
     messages.appendChild(message);
-    message.appendChild(message_right);
-    message_right.appendChild(text);
-    avatar.appendChild(img);
-    message_right.appendChild(avatar);
-
     messages.scrollTop = messages.scrollHeight;
 }
 
 async function addLeftMessage(userInfo, messageText){
     const messages = document.querySelector('#messages');
     const message = document.createElement('div');
-    message.classList.add('message');
-    message.setAttribute("data-userId", userInfo.userId);
-
-    const message_left = document.createElement('div');
-    message_left.classList.add('message-left');
-
-    const text = document.createElement('p');
-    text.classList.add('msg-left-text');
-    text.textContent = messageText;
-
-    const avatar = document.createElement('div');
-    avatar.classList.add('avatar');
-    avatar.addEventListener('click', () => {
+    message.className = 'message';
+    message.setAttribute('data-userId', userInfo.userId);
+    message.innerHTML += `
+        <div class="message-left">
+            <div class="avatar">
+                <img src=${userInfo.userAvatar}>
+            </div>
+            <p class="msg-left-text">
+                ${messageText}
+            </p>
+        </div>
+    `;
+    message.querySelector('.avatar').addEventListener('click', () => {
         showInfoModal(userInfo, ITEM_TYPE.USER);
-    })
-
-    const img = document.createElement('img');
-    img.src = userInfo.userAvatar;
-
+    });
     messages.appendChild(message);
-    message.appendChild(message_left);
-    avatar.appendChild(img);
-    message_left.appendChild(avatar);
-    message_left.appendChild(text);
-
     messages.scrollTop = messages.scrollHeight;
 }
 
@@ -219,16 +205,9 @@ async function addMessage(sendType, fromUserInfo, messageText){
 export async function handleGroupMessage(data){
     const messageText = data.content; //  挂载到左侧用户发送的消息栏上
     if (messageText) {
-        // 如果不在
-        if(!chatMessages[CHAT_TYPE.GROUP][data.group]){
-            return;
-        }
-        const userInfo = await getUserInfo({userId: -1});
-
-        addMessage2ChatMessages(CHAT_TYPE.GROUP, data.group, userInfo.userId, messageText, data.timestamp);
-        if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.group){
+        addMessage2ChatMessages(CHAT_TYPE.GROUP, data);
+        if(currentChatType == CHAT_TYPE.GROUP && currentChatId == data.group){
             // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
-            console.log("如果是当前窗口的", data.group)
             const fromUserInfo = await getUserInfo({userId: data.from})
 
             handleUserInfo(fromUserInfo);
@@ -236,7 +215,7 @@ export async function handleGroupMessage(data){
             addMessage(SEND_TYPE.OTHER, fromUserInfo, messageText);
         }else{
             // 不是当前窗口的，那么就添加到未读消息中，其中已经保证了chat_info的初始化
-            addUnreadMessage(CHAT_TYPE.FRIEND, data.group);
+            addUnreadMessage(CHAT_TYPE.GROUP, data.group);
         }
     }
 }
@@ -244,13 +223,7 @@ export async function handleGroupMessage(data){
 export async function handleFriendMessage(data){
     const messageText = data.content; //  挂载到左侧用户发送的消息栏上
     if (messageText) {
-        // 如果不在
-        if(!chatMessages[CHAT_TYPE.FRIEND][data.from]){
-            return;
-        }
-        const userInfo = await getUserInfo({userId: -1});
-
-        addMessage2ChatMessages(CHAT_TYPE.FRIEND, data.from, userInfo.userId, messageText, data.timestamp);
+        addMessage2ChatMessages(CHAT_TYPE.FRIEND, data);
         if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.from){
             // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
             const fromUserInfo = await getUserInfo({userId: data.from})
@@ -266,6 +239,9 @@ export async function handleFriendMessage(data){
 }
 
 function addUnreadMessage(chatType, chatId){
+    console.log("当前chatM", chatMessages)
+    console.log("当前chatType", chatType)
+    console.log("当前chatId", chatId)
     chatMessages[chatType][chatId]['num_unread_msg'] += 1;
     let num_unread_msg = chatMessages[chatType][chatId]['num_unread_msg'];
     // 在当前的用户列表中找到具有该属性的元素，并且添加未读消息

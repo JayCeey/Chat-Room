@@ -5,7 +5,8 @@ import { initMoreBtn } from "component/more";
 import { initUserProfile, initCurrentUserInfo } from "component/user";
 import { initLogoutBtn } from "component/logout";
 import { initSendMessage, getHistoryMessages } from "component/message";
-import { initAddButton, getUserFriendsList } from "component/friend";
+import { getUserFriendsList } from "component/friend";
+import { initAddButton } from "./component/search";
 import { initWebsocket } from "component/websocket";
 
 // 初始化

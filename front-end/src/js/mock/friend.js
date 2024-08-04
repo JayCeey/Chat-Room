@@ -1,4 +1,3 @@
-
 const mockUserFriendResponse = {
     friends: [
         {
@@ -34,26 +33,26 @@ const mockUserFriendResponse = {
 const mockSearchUserVO = {
     friends: [
         {
-            uid: 444,
-            username: "friend1",
+            userId: 888,
+            username: "testUser",
+            userAvatar: "",
         },
         {
-            uid: 555,
-            username: "friend2",
-        },
-        {
-            uid: 666,
-            username: "server123",
+            userId: 456,
+            username: "Tom",
+            userAvatar: "",
         },
     ],
     groups: [
         {
-            gid: 111,
-            username: "group1",
+            groupId: 10001,
+            groupName: "group1",
+            groupAvatar: "",
         },
         {
-            gid: 222,
-            username: "server123",
+            groupId: 10002,
+            groupName: "group2",
+            groupAvatar: "",
         },
     ],
     success: true,

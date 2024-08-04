@@ -11,8 +11,8 @@ export function getFriends(friendQuery){
     });
 }
 
-export function sendFriendRequest(addFriendVO){
-    return fetch(`${CONFIG.BASE_URL}/addFriend`, {
+export async function sendAddRequest(addFriendVO){
+    return fetch(`${CONFIG.BASE_URL}/add`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

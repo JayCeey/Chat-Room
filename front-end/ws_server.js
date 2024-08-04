@@ -58,14 +58,15 @@ server.on('connection', (ws) => {
             ws.send(
                 JSON.stringify({
                     'type': MESSAGE_TYPE.MESSAGE_GROUP,
-                    'group': '10001',
-                    'from': "123",
+                    'group': data.to, // 返回
+                    'from': "456", // 这里假设是456发送的返回消息
                     'to': data.from,
                     'content': 'received: ' + data.content,
                     'timestamp': new Date().toISOString(),
-                    'version': data.version+1,
                 })
             );
+            // 告知所有该群组中 在线的用户
+            
         }else if(data_type == MESSAGE_TYPE.ONLINE){
             console.log("user online: ", data.from);
             user = data.from;

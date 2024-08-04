@@ -7,6 +7,6 @@ function setGroupDefaultAvatar(groupInfo){
     }
 };
 
-export function handleGroupInfo(userInfo){
-    setGroupDefaultAvatar(userInfo);
+export function handleGroupInfo(groupInfo){
+    setGroupDefaultAvatar(groupInfo);
 }

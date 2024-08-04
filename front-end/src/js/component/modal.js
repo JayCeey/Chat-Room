@@ -1,4 +1,6 @@
 import { ITEM_TYPE } from "utils/constant";
+import { renderSearchResult } from "component/search";
+import { searchUser } from "api/search";
 
 function showGroupInfoModal(groupInfo) {
     const groupDetails = groupInfo.groupDetails? groupInfo.groupDetails : '暂无简介'
@@ -47,6 +49,23 @@ export function showInfoModal(info, itemType){
     });
 }
 
+function listenInput(input_friend_name){
+    input_friend_name.addEventListener('input', (event) => {
+        const queryName = input_friend_name.value.trim();
+        if (queryName.length > 0) {
+            const searchVO = {
+                queryName: queryName,
+                userId: -1,
+            };
+            searchUser(searchVO).then(response => {
+                if(response.ok) return response.json();
+            }).then(data => {
+                renderSearchResult(data);
+            })
+        }
+    });
+}
+
 // 初始化找好友弹窗
 export function showFindFriendModal(){
     const page_modal = document.querySelector(".page-modal");
@@ -73,4 +92,7 @@ export function showFindFriendModal(){
     close_btn.addEventListener('click', () => {
         page_modal.style.display = "none";
     });
+
+    const input_friend_name = modal_content.querySelector("#input-friend-name");
+    listenInput(input_friend_name);
 }

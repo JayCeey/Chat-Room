@@ -9,7 +9,12 @@ const mockUserInfo = {
     },
     "456": {
         username: 'Tom',
-        userDetails: 'hello, this is friend',
+        userDetails: 'hello, this is Tom',
+        userAvatar: "",
+    },
+    "789": {
+        username: 'JayChou',
+        userDetails: 'hello, this is Jaychou',
         userAvatar: "",
     },
 }
@@ -47,12 +52,12 @@ const mockUserGroup = {
 // 模拟群组数据，主键是group_id
 const mockGroupInfo = {
     "10001": {
-        groupName: 'group1',
+        groupName: 'JayCC的群',
         groupDetails: 'this is group1',
         groupAvatar: "",
     },
     "10002": {
-        groupName: 'group2',
+        groupName: 'Jayce一家人',
         groupDetails: 'this is group2',
         groupAvatar: "",
     },
