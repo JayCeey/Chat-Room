@@ -1,12 +1,12 @@
 import CONFIG from '../config.js';
 
-export function getFriends(userInfo){
+export function getFriends(friendQuery){
     return fetch(`${CONFIG.BASE_URL}/getUserFriendInfo`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userInfo),
+        body: JSON.stringify(friendQuery),
         credentials: 'include',
     });
 }

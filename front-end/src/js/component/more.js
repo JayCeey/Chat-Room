@@ -1,4 +1,4 @@
-export function initMoreBtn(){
+export async function initMoreBtn(){
     const more_btn = document.querySelector("#more-btn");
     more_btn.addEventListener('click', function() {
         const more = document.querySelector("#more");

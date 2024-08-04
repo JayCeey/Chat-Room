@@ -40,7 +40,7 @@ export function initNotice(){
 };
 
 // 监听服务器是否发送消息回来
-export function initNoticeListner(){
+export async function initNoticeListner(){
     const eventSource = new EventSource(`${CONFIG.BASE_URL}/notice`);
     eventSource.onmessage = (event) => {
         console.log(`收到服务器通知: ${event.data}`);

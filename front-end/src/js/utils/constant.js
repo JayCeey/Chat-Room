@@ -14,6 +14,11 @@ const CHAT_TYPE = {
     ADMIN: 'admin',
 };
 
+const ITEM_TYPE = {
+    USER: 'user',
+    GROUP: 'group',
+}
+
 const USER_STATE = {
     ONLINE: 'online',
     OFFLINE: 'offline',
@@ -58,6 +63,7 @@ const SEND_TYPE = {
 module.exports = {    
     MESSAGE_TYPE,
     CHAT_TYPE,
+    ITEM_TYPE,
     ADD_FRIEND_TYPE,
     ADD_GROUP_TYPE,
     NOTICE_TYPE,

@@ -1,8 +1,8 @@
 const mockLoginResponse = {
     userInfo: {
-        uid: 123,
+        userId: "123",
         username: "jaycehhh",
-        avatar: "",
+        userAvatar: "",
         userDetails: "hello, this is jayce",
     },
     success: true,
@@ -11,6 +11,11 @@ const mockLoginResponse = {
 const mockLoginUnmatchPasswordResponse = {
     success: false, 
     message: "密码错误"
+};
+
+const mockLoginNoExistResponse = {
+    success: false, 
+    message: "用户不存在！" // 根据查询的键值初始化message
 };
 
 const mockLogoutResponse = {
@@ -35,5 +40,6 @@ module.exports = {
     mockLoginUnmatchPasswordResponse,
     mockRegisterResponse,
     mockRegisterFailResponse,
+    mockLoginNoExistResponse
 }
 

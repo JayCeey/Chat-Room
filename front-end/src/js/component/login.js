@@ -1,7 +1,7 @@
 import {login} from 'api/login.js';
 import md5 from 'utils/encrypt.js';
 
-export function initLogin(){
+export async function initLogin(){
     document.getElementById('login-form').addEventListener('submit', function(event) {
         event.preventDefault(); // 阻止默认表单提交行为
     
@@ -40,7 +40,11 @@ export function initLogin(){
                 // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
                 alert("登陆成功，正在跳转...");
                 
-                sessionStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+                sessionStorage.setItem('userSessionInfo', JSON.stringify({
+                    'userId': data.userId,
+                    'username': data.username,
+                    'userRole': data.userRole,
+                }));
     
                 window.location.href = "index.html"; // 跳转到/index.html
                 return;

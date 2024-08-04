@@ -1,7 +1,7 @@
 import { logout } from 'api/login';
 
 // 点击注销按钮，首先向服务器发送注销消息，服务器返回success注销成功
-export function initLogoutBtn(){
+export async function initLogoutBtn(){
     document.getElementById('logout-button').addEventListener('click', () => {
         logout().then(response => {
             if (!response.ok) {

@@ -9,6 +9,8 @@ const online_users = {
     
 }
 
+// 或者这里可以将新的聊天信息插入database中更新
+
 function informUsers(user, type){
     Object.keys(online_users).forEach(key => {
         let ws_ = online_users[key];
@@ -44,54 +46,24 @@ server.on('connection', (ws) => {
                         'to': data.to,
                         'content': data.content,
                         'timestamp': new Date().toISOString(),
-                        'latestMsg': 3, // 最新的版本
+                        'latestMsg': 3, // 返回的最新的消息id号，对于QQ来说，用户登录时拿着这个值请求最新的消息
                     })
                 );
             }else{
+                // 这里之后应该推送消息
                 console.log(`${data.to}不在线！`)
             }
-            /* 
-            ws.send(
-                JSON.stringify({
-                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
-                    'from': data.to,
-                    'to': data.from,
-                    'content': 'received: ' + data.content,
-                    'timestamp': new Date().toISOString(),
-                    'latestMsg': 3, // 最新的版本
-                })
-            );
-            ws.send(
-                JSON.stringify({
-                    'type': MESSAGE_TYPE.MESSAGE_GROUP,
-                    'from': "server123",
-                    'to': data.from,
-                    'content': 'this is server annoncement!!!',
-                    'timestamp': new Date().toISOString(),
-                    'latestMsg': 3, // 最新的版本
-                })
-            );
-            */
         }else if(data_type == MESSAGE_TYPE.MESSAGE_GROUP){
             console.log("message group");
             ws.send(
                 JSON.stringify({
                     'type': MESSAGE_TYPE.MESSAGE_GROUP,
-                    'from': data.to,
+                    'group': '10001',
+                    'from': "123",
                     'to': data.from,
                     'content': 'received: ' + data.content,
                     'timestamp': new Date().toISOString(),
                     'version': data.version+1,
-                })
-            );
-            ws.send(
-                JSON.stringify({
-                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
-                    'from': "server123",
-                    'to': data.from,
-                    'content': 'this is server annoncement!!!',
-                    'timestamp': new Date().toISOString(),
-                    'latestMsg': 3, // 最新的版本
                 })
             );
         }else if(data_type == MESSAGE_TYPE.ONLINE){
@@ -99,26 +71,26 @@ server.on('connection', (ws) => {
             user = data.from;
             online_users[user] = ws;
             // 向客户端发送消息
-            ws.send(
-                JSON.stringify({
-                    'type': MESSAGE_TYPE.MESSAGE_FRIEND,
-                    'from': 'jayce',
-                    'content': 'hello!!',
-                    'timestamp': new Date().toISOString(),
-                })
-            );
+            // ws.send(
+            //     JSON.stringify({
+            //         'type': MESSAGE_TYPE.MESSAGE_FRIEND,
+            //         'from': 'jayce',
+            //         'content': 'hello!!',
+            //         'timestamp': new Date().toISOString(),
+            //     })
+            // );
             informUsers(user, MESSAGE_TYPE.ONLINE);
         }else if(data_type == MESSAGE_TYPE.ASK_ONLINE){
             // 客户端询问服务端这些用户是否在线
             const ask_online_users = data.users;
             let online_users_list = [];
             for(let i = 0; i < ask_online_users.length; i++){
-                let user = ask_online_users[i];
-                if(online_users[user]){
-                    online_users_list.push(user);
+                let userId = ask_online_users[i];
+                if(online_users[userId]){
+                    online_users_list.push(userId);
                 }
             }
-
+            
             ws.send(
                 JSON.stringify({
                     'type': MESSAGE_TYPE.RESPOND_ONLINE,

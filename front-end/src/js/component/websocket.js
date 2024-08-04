@@ -1,25 +1,25 @@
 import { getUserInfo } from "component/user";
-import { handleMessage } from "component/message";
+import { handleFriendMessage, handleGroupMessage } from "component/message";
 import { handleOnline, handleOffline, handleRespondOnline } from "component/online";
 import { MESSAGE_TYPE, CHAT_TYPE } from "utils/constant";
 
-let socket = null;
+let socket;
 const messageQueue = [];
 
 // 建立websocket通信
-export function initWebsocket() {
+export async function initWebsocket() {
 
     try{
         socket = new WebSocket('ws://localhost:3020');
 
         // 连接打开时的事件处理（上线时请求历史消息）
-        socket.addEventListener('open', (event) => {
+        socket.addEventListener('open', async (event) => {
             console.log('WebSocket connection established');
 
-            const userInfo = getUserInfo();
+            const userInfo = await getUserInfo({userId: -1});
             // 向服务器发送上线消息
             sendMessage({'type': MESSAGE_TYPE.ONLINE, 
-                         'from': userInfo.username,});
+                         'from': userInfo.userId,});
 
             while(messageQueue.length > 0){
                 sendMessage(messageQueue.shift());
@@ -40,7 +40,7 @@ export function initWebsocket() {
 
         // 发生错误时的事件处理
         socket.addEventListener('error', (error) => {
-            throw new Error('WebSocket error: ' + error);
+            console.error('WebSocket error:', error);
         });
     }catch(error){
         console.error('WebSocket error:', error);
@@ -49,9 +49,9 @@ export function initWebsocket() {
 
 function onMessage(data){
     if(data.type == MESSAGE_TYPE.MESSAGE_FRIEND){
-        handleMessage(CHAT_TYPE.FRIEND, data);
+        handleFriendMessage(data);
     }else if(data.type == MESSAGE_TYPE.MESSAGE_GROUP){
-        handleMessage(CHAT_TYPE.GROUP, data);
+        handleGroupMessage(data);
     }else if(data.type == MESSAGE_TYPE.ONLINE){
         handleOnline(data.user);
     }else if(data.type == MESSAGE_TYPE.OFFLINE){
@@ -62,6 +62,11 @@ function onMessage(data){
 }
 
 export function sendMessage(data){
+    if(!socket){
+        console.error('WebSocket is not initialized');
+        return;
+    }
+
     if(socket.readyState == WebSocket.OPEN){
         socket.send(JSON.stringify(data));
     }else{
@@ -70,9 +75,9 @@ export function sendMessage(data){
     }
 }
 
-export function getFriendsOnlineState(users){
+export async function getFriendsOnlineState(usersQuery){
     sendMessage({
         type: MESSAGE_TYPE.ASK_ONLINE,
-        users: users,
+        users: usersQuery.users,
     });
 }

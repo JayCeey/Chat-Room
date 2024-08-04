@@ -46,7 +46,20 @@
     margin-bottom: 16px;
 }
 
-#user-info {
+.modal-avatar {
+    width: 80px;
+    height: 80px;
+    background-color: #3b5998;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+
+#user-info, #group-info {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -55,7 +68,7 @@
     font-size: 24px;
 }
 
-.user-details {
+.user-details, .group-details {
     font-size: 20px;
 }
 

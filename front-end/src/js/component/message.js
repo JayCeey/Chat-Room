@@ -1,10 +1,9 @@
-import { SEND_TYPE, CHAT_TYPE, MESSAGE_TYPE } from "utils/constant";
+import { SEND_TYPE, CHAT_TYPE, ITEM_TYPE, MESSAGE_TYPE } from "utils/constant";
 import { sendMessage } from "component/websocket";
-import { getUserInfo, showUserModal } from "component/user";
+import { getUserInfo, handleUserInfo } from "component/user";
+import { showInfoModal } from "component/modal";
 import { chatType2messageType} from "utils/converter";
 import { history } from 'api/chat';
-import DefaultAvatar from "assets/images/default_avatar.jpg";
-import { handleUserInfo } from "./user";
 
 // 使用到的变量
 let currentChatType = CHAT_TYPE.NONE; // 当前的聊天类型
@@ -17,7 +16,7 @@ let currentChatId = ''; // 当前的聊天对象id
     'admin': {},
 }; 
 
-function initSendPic(){
+async function initSendPic(){
     let pic_btn = document.getElementById("pic-btn");
     pic_btn.addEventListener("click", ()=>{
         const pic_input = document.querySelector("#pic-input");
@@ -33,7 +32,7 @@ function initSendPic(){
     });
 }
 
-function initSendMessageInput(){
+async function initSendMessageInput(){
     document.querySelector('#send-message-input').addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             document.getElementById('send-message').click();
@@ -42,32 +41,32 @@ function initSendMessageInput(){
 }
 
 // 监听消息发送按钮的点击事件
-export function initSendMessage(){
-    document.getElementById('send-message').addEventListener('click', () => {
+export async function initSendMessage(){
+    document.getElementById('send-message').addEventListener('click', async () => {
         if(currentChatType == CHAT_TYPE.NONE){
             alert("请选择一名聊天对象！");
             return;
         }
         const input = document.getElementById('send-message-input');
         const messageText = input.value.trim();
-        const userInfo = getUserInfo();
+        const userInfo = await getUserInfo({userId: -1});
         if (messageText) {
 
-            const timestamp = new Date().toLocaleTimeString();
+            const timestamp = new Date().toISOString();
             
             const messageType = chatType2messageType(currentChatType);
 
             const data = {"type": messageType, 
                           "content": messageText, 
-                          "from": userInfo.username,
+                          "from": userInfo.userId,
                           "to": currentChatId,
                           "timestamp": timestamp,}
 
             sendMessage(data);
 
             addMessage(SEND_TYPE.SELF, userInfo, messageText);
- 
-            addMessage2ChatMessages(currentChatType, userInfo.username, currentChatId, messageText, timestamp);
+
+            addMessage2ChatMessages(currentChatType, userInfo.userId, currentChatId, messageText, timestamp);
 
             input.value = '';
         }
@@ -98,38 +97,36 @@ function initChatInfo(chatType, chatId){
     }
 }
 
-export function loadMessages(messageInfoList){
-    const userInfo = getUserInfo();
+export async function loadMessages(messageInfoList){
+    const userInfo = await getUserInfo({userId: -1});
     const messages = document.querySelector("#messages");
     messages.innerHTML = ``;
     if(messageInfoList){
         for(let i = 0; i < messageInfoList.length; i++){
             let messageInfo = messageInfoList[i];
-            if(messageInfo.from == userInfo.username){
+            
+            if(messageInfo.senderId == userInfo.userId){
                 // 如果是自己发送的
-                addMessage(SEND_TYPE.SELF, userInfo, messageInfo.content);
-            }else if(messageInfo.to == userInfo.username){
+                addMessage(SEND_TYPE.SELF, userInfo, messageInfo.msgContent);
+            }else{
                 // 如果是别人发送的
-                const from = {
-                    'username': messageInfo.from,
-                    'avatar': ''
-                }
-                handleUserInfo(from);
-                addMessage(SEND_TYPE.OTHER, from, messageInfo.content);
+                const fromUserInfo = await getUserInfo({userId: messageInfo.senderId});
+                handleUserInfo(fromUserInfo);
+                addMessage(SEND_TYPE.OTHER, fromUserInfo, messageInfo.msgContent);
             }
         }
     }
 }
 
 // 添加到消息列表中
-function addMessage2ChatMessages(chatType, from, to, messageText, timestamp){
-    const userInfo = getUserInfo();
+async function addMessage2ChatMessages(chatType, fromUserId, toUserId, messageText, timestamp){
+    const userInfo = await getUserInfo({userId: -1});
 
     let chatId;
-    if(from == userInfo.username){
-        chatId = to;
+    if(fromUserId == userInfo.userId){
+        chatId = toUserId;
     }else{
-        chatId = from;
+        chatId = fromUserId;
     }
 
     if(!checkChatInfo(chatType, chatId)){
@@ -137,97 +134,133 @@ function addMessage2ChatMessages(chatType, from, to, messageText, timestamp){
     }
 
     chatMessages[chatType][chatId]['history'].push({
-        content: messageText,
-        from: from,
-        to: to,
-        time: timestamp,
+        msgId: -1,
+        msgContent: messageText,
+        senderId: fromUserId,
+        msgCreateTime: timestamp,
+        status: 0,
     });
 
     console.log("打印chatMessages: ", chatMessages);
 }
 
-function addMessage(sendType, from, messageText){
+async function addRightMessage(userInfo, messageText){
     const messages = document.querySelector('#messages');
     const message = document.createElement('div');
     message.classList.add('message');
-    message.setAttribute("data-username", from.username);
-    
-    // 表示自己发送的
-    if(sendType == SEND_TYPE.SELF){
-        const userInfo = getUserInfo();
+    message.setAttribute("data-userId", userInfo.userId);
 
-        const message_right = document.createElement('div');
-        message_right.classList.add('message-right');
+    const message_right = document.createElement('div');
+    message_right.classList.add('message-right');
 
-        const text = document.createElement('p');
-        text.classList.add('msg-right-text');
-        text.textContent = messageText;
+    const text = document.createElement('p');
+    text.classList.add('msg-right-text');
+    text.textContent = messageText;
 
-        const avatar = document.createElement('div');
-        avatar.classList.add('avatar');
-        avatar.addEventListener('click', () => {
-            showUserModal(userInfo);
-        })
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar');
+    avatar.addEventListener('click', () => {
+        showInfoModal(userInfo, ITEM_TYPE.USER);
+    })
 
-        const img = document.createElement('img');
-        img.src = userInfo.avatar;
+    const img = document.createElement('img');
+    img.src = userInfo.userAvatar;
 
-        messages.appendChild(message);
-        message.appendChild(message_right);
-        message_right.appendChild(text);
-        avatar.appendChild(img);
-        message_right.appendChild(avatar);
-    }
-    // 表示别人发送的
-    else if(sendType == SEND_TYPE.OTHER){
-        const message_left = document.createElement('div');
-        message_left.classList.add('message-left');
-    
-        const text = document.createElement('p');
-        text.classList.add('msg-left-text');
-        text.textContent = messageText;
-    
-        const avatar = document.createElement('div');
-        avatar.classList.add('avatar');
-        avatar.addEventListener('click', () => {
-            showUserModal(from);
-        })
+    messages.appendChild(message);
+    message.appendChild(message_right);
+    message_right.appendChild(text);
+    avatar.appendChild(img);
+    message_right.appendChild(avatar);
 
-        const img = document.createElement('img');
-        img.src = from.avatar;
-    
-        messages.appendChild(message);
-        message.appendChild(message_left);
-        avatar.appendChild(img);
-        message_left.appendChild(avatar);
-        message_left.appendChild(text);
-    }
     messages.scrollTop = messages.scrollHeight;
+}
+
+async function addLeftMessage(userInfo, messageText){
+    const messages = document.querySelector('#messages');
+    const message = document.createElement('div');
+    message.classList.add('message');
+    message.setAttribute("data-userId", userInfo.userId);
+
+    const message_left = document.createElement('div');
+    message_left.classList.add('message-left');
+
+    const text = document.createElement('p');
+    text.classList.add('msg-left-text');
+    text.textContent = messageText;
+
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar');
+    avatar.addEventListener('click', () => {
+        showInfoModal(userInfo, ITEM_TYPE.USER);
+    })
+
+    const img = document.createElement('img');
+    img.src = userInfo.userAvatar;
+
+    messages.appendChild(message);
+    message.appendChild(message_left);
+    avatar.appendChild(img);
+    message_left.appendChild(avatar);
+    message_left.appendChild(text);
+
+    messages.scrollTop = messages.scrollHeight;
+}
+
+async function addMessage(sendType, fromUserInfo, messageText){
+    if(sendType == SEND_TYPE.SELF){
+        // 表示自己发送的
+        addRightMessage(fromUserInfo, messageText);
+    }else if(sendType == SEND_TYPE.OTHER){
+        // 表示别人发送的
+        addLeftMessage(fromUserInfo, messageText);
+    }
 };
 
-export function handleMessage(chatType, data){
+export async function handleGroupMessage(data){
     const messageText = data.content; //  挂载到左侧用户发送的消息栏上
     if (messageText) {
         // 如果不在
-        if(!chatMessages[chatType][data.from]){
+        if(!chatMessages[CHAT_TYPE.GROUP][data.group]){
             return;
         }
-        const userInfo = getUserInfo();
+        const userInfo = await getUserInfo({userId: -1});
 
-        addMessage2ChatMessages(chatType, data.from, userInfo.username, messageText, data.timestamp);
-        if(currentChatType == chatType && currentChatId == data.from){
+        addMessage2ChatMessages(CHAT_TYPE.GROUP, data.group, userInfo.userId, messageText, data.timestamp);
+        if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.group){
             // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
-            const from = {
-                'username': data.from,
-                'avatar': ''
-            }
+            console.log("如果是当前窗口的", data.group)
+            const fromUserInfo = await getUserInfo({userId: data.from})
 
-            handleUserInfo(from);
+            handleUserInfo(fromUserInfo);
 
-            addMessage(SEND_TYPE.OTHER, from, messageText);
+            addMessage(SEND_TYPE.OTHER, fromUserInfo, messageText);
         }else{
             // 不是当前窗口的，那么就添加到未读消息中，其中已经保证了chat_info的初始化
-            addUnreadMessage(chatType, data.from);
+            addUnreadMessage(CHAT_TYPE.FRIEND, data.group);
+        }
+    }
+}
+
+export async function handleFriendMessage(data){
+    const messageText = data.content; //  挂载到左侧用户发送的消息栏上
+    if (messageText) {
+        // 如果不在
+        if(!chatMessages[CHAT_TYPE.FRIEND][data.from]){
+            return;
+        }
+        const userInfo = await getUserInfo({userId: -1});
+
+        addMessage2ChatMessages(CHAT_TYPE.FRIEND, data.from, userInfo.userId, messageText, data.timestamp);
+        if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.from){
+            // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
+            const fromUserInfo = await getUserInfo({userId: data.from})
+
+            handleUserInfo(fromUserInfo);
+
+            addMessage(SEND_TYPE.OTHER, fromUserInfo, messageText);
+        }else{
+            // 不是当前窗口的，那么就添加到未读消息中，其中已经保证了chat_info的初始化
+            addUnreadMessage(CHAT_TYPE.FRIEND, data.from);
         }
     }
 }
@@ -238,9 +271,9 @@ function addUnreadMessage(chatType, chatId){
     // 在当前的用户列表中找到具有该属性的元素，并且添加未读消息
     let item;
     if(chatType == CHAT_TYPE.FRIEND){
-        item = document.querySelector(`.friend-item[data-name="${chatId}"]`);
+        item = document.querySelector(`.friend-item[data-id="${chatId}"]`);
     }else if(chatType == CHAT_TYPE.GROUP){
-        item = document.querySelector(`.group-item[data-name="${chatId}"]`);
+        item = document.querySelector(`.group-item[data-id="${chatId}"]`);
     }
     const unread_msg = item.querySelector('.unread-msg');
     if(!unread_msg){
@@ -258,12 +291,13 @@ function addUnreadMessage(chatType, chatId){
 }
 
 export function clearUnreadMessage(chatType, chatId){
+    
     chatMessages[chatType][chatId]['num_unread_msg'] = 0;
     let item;
     if(chatType == CHAT_TYPE.FRIEND){
-        item = document.querySelector(`.friend-item[data-name="${chatId}"]`);
+        item = document.querySelector(`.friend-item[data-id="${chatId}"]`);
     }else if(chatType == CHAT_TYPE.GROUP){
-        item = document.querySelector(`.group-item[data-name="${chatId}"]`);
+        item = document.querySelector(`.group-item[data-id="${chatId}"]`);
     }
     const unread_msg = item.querySelector('.unread-msg');
     if(unread_msg){
@@ -293,38 +327,45 @@ export function getCurrentState(){
 export function changeChatView(chatType, chatId){
     currentChatType = chatType; // 改变当前聊天类型
     currentChatId = chatId;
-    const chatInfo = chatMessages[chatType][currentChatId]['history'];
-    loadMessages(chatInfo); 
+    const messageInfoList = chatMessages[chatType][currentChatId]['history'];
+    loadMessages(messageInfoList); 
     clearUnreadMessage(chatType, currentChatId);
 }
 
 // 获取历史的消息
-export function getHistoryMessages(userInfo) { 
-    history(userInfo).then(response => {
+export async function getHistoryMessages() { 
+    const userInfo = await getUserInfo({userId: -1});
+    const userQuery = {userId: userInfo.userId}
+    history(userQuery).then(response => {
         if (!response.ok) {
             throw new Error('网络错误：' + response.statusText);
         }
         return response.json();
     })
-    .then(data => {
-        if(!data.success){
+    .then(response => {
+        if(!response.success){
             throw new Error('获取历史消息失败');
         }
 
-        console.log("返回chat history: ", data);
+        let data = response.data;
 
-        let chats = data.chats;
+        // 群组消息
+        const groupChatsInfo = data.groupChatsInfo;
+        Object.keys(groupChatsInfo).forEach(groupId => {
+            initChatInfo(CHAT_TYPE.GROUP, groupId);
+            chatMessages[CHAT_TYPE.GROUP][groupId].history = groupChatsInfo[groupId];
+        })
 
-        for(let i = 0; i < chats.length; i++) {
-            let chat = chats[i];
-            if(chat.type == MESSAGE_TYPE.MESSAGE_FRIEND){
-                initChatInfo('friend', chat['name']);
-                chatMessages['friend'][chat['name']]['history'] = chat.history;
-            }else if(chat.type == MESSAGE_TYPE.MESSAGE_GROUP){
-                initChatInfo('group', chat['name']);
-                chatMessages['group'][chat['name']]['history'] = chat.history;
-            }
-        }
+        // 好友消息
+        const friendChatsInfo = data.userChatsInfo;
+        Object.keys(friendChatsInfo).forEach(friendUserId => {
+            let chatInfo = friendChatsInfo[friendUserId];
+            let chatHistory = chatInfo.history;
+            initChatInfo(CHAT_TYPE.FRIEND, friendUserId);
+            chatMessages[CHAT_TYPE.FRIEND][friendUserId].history = chatHistory;
+        })
+
+        console.log("当前的chat messages", chatMessages)
     })
     .catch(error => {
         console.error('错误:' + error);
