@@ -2,6 +2,11 @@
 
 // 模拟用户数据，主键是uid
 const mockUserInfo = {
+    "001": {
+        username: 'Server',
+        userDetails: 'I am server',
+        userAvatar: "",
+    },
     "123": {
         username: 'Jayce',
         userDetails: 'hello, this is jayce',
@@ -84,6 +89,7 @@ const mockUserChatInfo = {
                 senderId: "123",
                 msgCreateTime: "2021-11-11 12:00:00",
                 status: 0,
+                form: 0,
             },
             {
                 msgId: "2",
@@ -91,6 +97,7 @@ const mockUserChatInfo = {
                 senderId: "456",
                 msgCreateTime: "2021-11-11 12:00:00",
                 status: 0,
+                form: 0,
             },
     ],
 }
@@ -103,6 +110,7 @@ const mockGroupChatInfo = {
                 senderId: "123",
                 msgCreateTime: "2021-11-11 12:00:00",
                 status: 0,
+                form: 0,
             },
             {
                 msgId: "2",
@@ -110,6 +118,7 @@ const mockGroupChatInfo = {
                 senderId: "456",
                 msgCreateTime: "2021-11-11 12:00:00",
                 status: 0,
+                form: 0,
             },
         ],
     "10002": [

@@ -23,12 +23,19 @@ export async function handleOffline(userId){
 
 async function handleChangeState(userInfo, state){
     const currentState = getCurrentState();
+    const friend_items = document.querySelectorAll("#friend .friend-item");
+    for(let i = 0; i < friend_items.length; i++){
+        let friend_item = friend_items[i];
+        if(friend_item.getAttribute("data-id") == userInfo.userId){
+            friend_item.setAttribute('data-online', state)
+        }
+    }
     if(currentState.currentChatType == CHAT_TYPE.FRIEND && currentState.currentChatId == userInfo.userId){
         document.getElementById('chat-title-avatar').setAttribute('data-online', state);
     }
 }
 
-export function getUserOnlineState(userInfo){
+export async function getUserOnlineState(userInfo){
     if(!onlineUsers[userInfo.userId]){
         console.log(`${userInfo.username}不在线`);
         return false;

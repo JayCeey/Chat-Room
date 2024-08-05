@@ -5,7 +5,7 @@ let unreadCnt = 0;
 
 // 打开添加好友窗口
 export function initNotice(){
-    document.getElementById('notice-button').addEventListener('click', () => {
+    document.getElementById('notice-button').addEventListener('click', async () => {
         const page_modal = document.querySelector(".page-modal");
         const modal_content = page_modal.querySelector(".modal-content");
         modal_content.innerHTML = `
@@ -15,6 +15,11 @@ export function initNotice(){
             </div>
         `;
         const notice_list = modal_content.querySelector('#notice-list');
+        page_modal.style.display = "block";
+        const close_btn = page_modal.querySelector('.close-modal');
+        close_btn.addEventListener('click', () => {
+            page_modal.style.display = "none";
+        });
         for(let i = 0; i < noticeList.length; i++){
             let notice = noticeList[i];
             console.log(noticeList);
@@ -25,17 +30,21 @@ export function initNotice(){
                         <span class="notice-title">${notice.notice_title}</span>
                         <div class="notice-timestamp">${notice.timestamp}</div>
                     </div>
-                    <div class="notice-content">${notice.notice_content}</div>
+                    <div class="notice-content">
+                        ${notice.notice_content}
+                        <div class="operation-buttons">
+                            <button>查看</button>
+                            <button>添加</button>
+                            <button>拒绝</button>
+                            <button>删除</button>
+                        </div>
+                    </div>
                     <div class="notice-sender">发送人：${notice.notice_sender}</div>
                 </div>
             `
         }
-        page_modal.style.display = "block";
-        const close_btn = page_modal.querySelector('.close-modal');
-        close_btn.addEventListener('click', () => {
-            page_modal.style.display = "none";
-        });
-       clear_unread_message();
+        
+        clearUnreadNotice()
     });
 };
 
@@ -52,10 +61,10 @@ export async function initNoticeListner(){
 
 function addUnreadNotice(){
     unreadCnt += 1;
-    document.querySelector('#new-notice').style.display = "block";
+    document.querySelector('#notice-button').setAttribute("data-newMsg", true);
 }
 
-function clear_unread_message(){
+function clearUnreadNotice(){
     unreadCnt = 0;
-    document.querySelector('#new-notice').style.display = "none";
+    document.querySelector('#notice-button').setAttribute("data-newMsg", false);
 }

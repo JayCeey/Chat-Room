@@ -7,6 +7,14 @@ const MESSAGE_TYPE = {
     RESPOND_ONLINE: 5,
 };
 
+const MESSAGE_FORM = {
+    TEXT: 0,
+    IMAGE: 1,
+    FILE: 2,
+    VIDEO: 3,
+    AUDIO: 4,
+}
+
 const CHAT_TYPE = {
     NONE: 'none',
     FRIEND: 'friend',
@@ -70,4 +78,5 @@ module.exports = {
     USER_TYPE,
     SEND_TYPE,
     USER_STATE,
+    MESSAGE_FORM,
 };

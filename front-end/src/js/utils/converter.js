@@ -19,3 +19,27 @@ export function chatType2messageType(chatType){
     }
     return messageType;
 }
+
+// 只是例子，具体根据业务逻辑来
+export function sendMessageConverter(sendMessageInfo){
+    const convertedMessage = {};
+    convertedMessage.type = chatType2messageType(sendMessageInfo.msgType);
+    convertedMessage.content = sendMessageInfo.msgContent;
+    convertedMessage.from = sendMessageInfo.senderId;
+    convertedMessage.to = sendMessageInfo.to;
+    convertedMessage.timestamp = sendMessageInfo.msgCreateTime;
+    convertedMessage.form = sendMessageInfo.form;
+    return convertedMessage;
+}   
+
+export function recvMessageConverter(recvMessageInfo){
+    const convertedMessage = {};
+    convertedMessage.msgId = "3";
+    convertedMessage.msgContent = recvMessageInfo.content;
+    convertedMessage.senderId = recvMessageInfo.from;
+    convertedMessage.msgCreateTime = recvMessageInfo.timestamp;
+    convertedMessage.status = 0;
+    convertedMessage.form = recvMessageInfo.form;
+
+    return convertedMessage;
+}

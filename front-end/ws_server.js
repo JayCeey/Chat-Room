@@ -47,6 +47,7 @@ server.on('connection', (ws) => {
                         'content': data.content,
                         'timestamp': new Date().toISOString(),
                         'latestMsg': 3, // 返回的最新的消息id号，对于QQ来说，用户登录时拿着这个值请求最新的消息
+                        'form': data.form,
                     })
                 );
             }else{
@@ -59,10 +60,11 @@ server.on('connection', (ws) => {
                 JSON.stringify({
                     'type': MESSAGE_TYPE.MESSAGE_GROUP,
                     'group': data.to, // 返回
-                    'from': "456", // 这里假设是456发送的返回消息
+                    'from': "001", // 这里假设是456发送的返回消息
                     'to': data.from,
-                    'content': 'received: ' + data.content,
+                    'content': data.content,
                     'timestamp': new Date().toISOString(),
+                    'form': data.form,
                 })
             );
             // 告知所有该群组中 在线的用户

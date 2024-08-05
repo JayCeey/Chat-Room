@@ -147,6 +147,12 @@ app.post('/getUserFriendInfo', (req, res) => {
     for(let i = 0; i < groupsId.length; i++){
         let groupInfo = database.group_info[groupsId[i]];
         groupInfo.groupId = groupsId[i];
+        // 添加群组的成员基本信息
+        groupInfo.groupMembers = []
+        let groupMembersUserId = database.group_member[groupsId[i]];
+        groupMembersUserId.forEach((memberId) => {
+            groupInfo.groupMembers.push(database.user_info[memberId]);
+        });
         groupsInfo.push(groupInfo);
     }
 

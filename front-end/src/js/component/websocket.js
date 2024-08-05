@@ -48,6 +48,7 @@ export async function initWebsocket() {
 };
 
 function onMessage(data){
+    console.log("收到data: ", data)
     if(data.type == MESSAGE_TYPE.MESSAGE_FRIEND){
         handleFriendMessage(data);
     }else if(data.type == MESSAGE_TYPE.MESSAGE_GROUP){
@@ -67,6 +68,8 @@ export function sendMessage(data){
         return;
     }
 
+    console.log("将要发送data", data)
+
     if(socket.readyState == WebSocket.OPEN){
         socket.send(JSON.stringify(data));
     }else{
@@ -75,7 +78,7 @@ export function sendMessage(data){
     }
 }
 
-export async function getFriendsOnlineState(usersQuery){
+export async function askUsersOnlineState(usersQuery){
     sendMessage({
         type: MESSAGE_TYPE.ASK_ONLINE,
         users: usersQuery.users,

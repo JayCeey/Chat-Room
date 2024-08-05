@@ -106,12 +106,6 @@
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    transition: transform 0.3s ease, border-color 0.3s ease, border-width 0.3s ease;
-
-    &:hover {
-        transform: scale(1.1);
-        border-color: #8f8f8f;
-    }
 }
 
 .group-avatar, .friend-avatar {
@@ -120,4 +114,30 @@
     background-color: #3b5998;
     border-radius: 50%;
     margin-right: 10px;
+}
+
+.friend-item {
+    .friend-avatar {
+        position: relative;
+
+        &::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            right: 2px;
+        }
+    }
+
+    &[data-online="true"] .friend-avatar::after {
+        background-color: rgb(7, 185, 7);
+        border: 1px solid #fff;
+    }
+
+    &[data-online="false"] .friend-avatar::after {
+        background-color: red;
+        border: 1px solid #fff;
+    }
 }

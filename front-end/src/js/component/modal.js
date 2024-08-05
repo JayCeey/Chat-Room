@@ -1,10 +1,12 @@
 import { ITEM_TYPE } from "utils/constant";
 import { renderSearchResult } from "component/search";
 import { searchUser } from "api/search";
+import { getUserInfo, handleUserInfo } from "component/user";
+import { getUserOnlineState } from "component/online";
 
-function showGroupInfoModal(groupInfo) {
+async function showGroupInfoModal(modal_content, groupInfo) {
     const groupDetails = groupInfo.groupDetails? groupInfo.groupDetails : '暂无简介'
-    return `
+    modal_content.innerHTML = `
         <div id="group-info">
             <div class="avatar modal-avatar">
                 <img src="${groupInfo.groupAvatar}" alt="avatar">
@@ -13,13 +15,38 @@ function showGroupInfoModal(groupInfo) {
         </div>
         <p class="modal-subtitle">群组简介</p>
         <div class="group-details">${groupDetails}</div>
-    `
+        <p class="modal-subtitle">群组成员</p>
+        <div id="group-members">
+            
+        </div>
+            
+    `;
+
+    const group_members = modal_content.querySelector('#group-members');
+
+    // 根据群成员id找到他们的详细信息
+    const groupMembers = groupInfo.groupMembers;
+    for (let i = 0; i < groupMembers.length; i++) {
+        let memberUserInfo = groupMembers[i];
+        handleUserInfo(memberUserInfo);
+        let data_online = await getUserOnlineState(memberUserInfo);
+        group_members.innerHTML += `
+            <div class="group-member" data-online="${data_online}">
+                <div class="avatar member-avatar">
+                    <img src="${memberUserInfo.userAvatar}" alt="avatar">
+                </div>
+                <div class="username">${memberUserInfo.username}</div>
+            </div>
+        `
+    }
+    
+    return modal_content;
 }
 
 // 弹窗显示用户信息
-function showUserInfoModal(userInfo) {
+async function showUserInfoModal(modal_content, userInfo) {
     const userDetails = userInfo.userDetails? userInfo.userDetails : '暂无简介';
-    return `
+    modal_content.innerHTML = `
         <div id="user-info">
             <div class="avatar modal-avatar">
                 <img src="${userInfo.userAvatar}" alt="avatar">
@@ -36,10 +63,10 @@ export function showInfoModal(info, itemType){
     const modal_content = page_modal.querySelector(".modal-content");
 
     if(itemType == ITEM_TYPE.USER){
-        modal_content.innerHTML = showUserInfoModal(info);
+        showUserInfoModal(modal_content, info);
     }
     else if(itemType == ITEM_TYPE.GROUP){
-        modal_content.innerHTML = showGroupInfoModal(info);
+        showGroupInfoModal(modal_content, info);
     }
     page_modal.style.display = "block";
     const close_btn = page_modal.querySelector('.close-modal');

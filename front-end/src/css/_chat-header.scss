@@ -3,15 +3,6 @@
     justify-content: left;
 }
 
-#new-notice {
-    display: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: red;
-    color: white;
-}
-
 #chat-room {
     display: flex;
     width: 100%;
@@ -79,6 +70,7 @@
     color: #555;
 
     button {
+        position: relative;
         width: 50px;
         height: 50px;
         margin-left: 25px;
@@ -89,5 +81,19 @@
         font-family: sans-serif;
         border: 3px solid white;
         cursor: pointer;
+    }
+}
+
+#notice-button {
+    &[data-newMsg="true"]::after {
+        content: ''; /* 可以添加文字或图标 */
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 10px;
+        height: 10px;
+        background-color: red;
+        border-radius: 50%;
+        border: 2px solid white;
     }
 }
