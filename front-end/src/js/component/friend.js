@@ -1,23 +1,12 @@
 
 import { CHAT_TYPE, ITEM_TYPE } from "utils/constant";
-import { getUserInfo, handleUserInfo } from "component/user";
-import { getFriends } from 'api/friend';
-import { addNewChat, changeChatView } from "component/message";
-import { askUsersOnlineState } from "component/websocket";
-import { getUserOnlineState } from "component/online";
+import { setUserContext } from "stores/user";
+import { changeChatView } from "stores/message";
+import { getUserOnlineState } from "stores/online";
+import { getOnlineNum } from "stores/friend";
 import { showInfoModal } from "component/modal";
-import { handleGroupInfo } from "component/group";
 
-async function getOnlineNum(groupMembers){
-    let online_num = 0;
-    for(let i = 0; i < groupMembers.length; i++){
-        const isOnline = await getUserOnlineState(groupMembers[i]);
-        if(isOnline) online_num++;
-    }
-    return online_num;
-}
-
-async function handleGroupItemClick(groupItem) {
+export async function handleGroupItemClick(groupItem) {
     const groupMembers = groupItem.groupMembers;
     const online_num = await getOnlineNum(groupMembers);
     const chatTitle = document.querySelector("#chat-title");
@@ -38,7 +27,7 @@ async function handleGroupItemClick(groupItem) {
     changeChatView(CHAT_TYPE.GROUP, groupItem.groupId);
 }
 
-async function handleFriendItemClick(friendItem) {
+export async function handleFriendItemClick(friendItem) {
     // 更新标题
     let data_online = await getUserOnlineState(friendItem);
     const chat_title = document.querySelector("#chat-title");
@@ -60,6 +49,9 @@ async function handleFriendItemClick(friendItem) {
 }
 
 export async function initGroupList(groupInfo){
+    // 设置到userContext中
+    setUserContext(ITEM_TYPE.GROUP, groupInfo);
+
     const group_item = document.createElement('div');
     const groupId = groupInfo.groupId;
     const groupName = groupInfo.groupName;
@@ -79,6 +71,9 @@ export async function initGroupList(groupInfo){
 
 // 初始化朋友或群组列表
 export async function initFriendList(friendInfo){
+    // 设置到userContext中
+    setUserContext(ITEM_TYPE.USER, friendInfo);
+
     const friend_item = document.createElement('div');
     const friendId = friendInfo.userId;
     friend_item.classList.add('friend-item');
@@ -95,55 +90,3 @@ export async function initFriendList(friendInfo){
     });
     document.getElementById('friend').appendChild(friend_item);
 };
-
-export async function getUserFriendsList(){
-    const userInfo = await getUserInfo({userId: -1});
-    const friendQuery = {
-        userId: userInfo.userId,
-    }
-    return getFriends(friendQuery).then(response => {
-        if (!response.ok) {
-            throw new Error('网络错误：' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if(!data.success){
-            throw new Error('获取好友列表失败');
-        }
-        const friendList = data.friends;
-        
-        // 向websocket服务器询问这些好友是否上线
-        let usersQuery = {users: []};
-        let askUsersIdSet = new Set();
-        
-        for (let i = 0; i < friendList.length; i++) {
-            let friendInfo = friendList[i];
-            askUsersIdSet.add(friendList[i].userId);
-            handleUserInfo(friendInfo);
-            // 获取在线状态并设置对应的在线状态
-            initFriendList(friendInfo);
-            addNewChat(CHAT_TYPE.FRIEND, friendInfo.userId);
-        }
-
-        const groupList = data.groups;
-
-        for (let i = 0; i < groupList.length; i++) {
-            let groupInfo = groupList[i];
-            groupInfo.groupMembers.forEach(memberInfo => {
-                askUsersIdSet.add(memberInfo.userId);
-            });
-            handleGroupInfo(groupInfo);
-            initGroupList(groupInfo);
-            addNewChat(CHAT_TYPE.GROUP, groupInfo.groupId);
-        }
-
-        usersQuery.users = Array.from(askUsersIdSet);
-        askUsersOnlineState(usersQuery);
-    })
-    .catch(error => {
-        console.error('错误:' + error);
-    }); 
-}
-
-

@@ -1,0 +1,76 @@
+@import 'base';
+html, body {
+    @include main;
+}
+
+/* 注册容器样式 */
+.register-container {
+    background: #fff;
+    padding: 20px;  
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 表单样式 */
+#register-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    padding: 8px 0 8px 0;
+    font-family: 'SimHei';
+    display: flex;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 12px 12px 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 15px;
+    text-align: left;
+}
+
+#message {
+    margin-bottom: 15px;
+    color: #e74c3c;
+}
+
+button[type="submit"] {
+    background-color: #29b491;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #2980b9;
+}
+
+/* 跳转链接样式 */
+.switch {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.switch a {
+    color: #29b491;
+    text-decoration: none;
+}
+
+.switch a:hover {
+    text-decoration: underline;
+}
+

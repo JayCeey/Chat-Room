@@ -20,3 +20,14 @@ export function logout(){
         credentials: 'include',
     })
 };
+
+export function register(userInfo){
+    return fetch(`${CONFIG.BASE_URL}/register`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userInfo),
+        credentials: 'include',
+    })
+}

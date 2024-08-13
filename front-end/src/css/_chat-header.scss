@@ -66,21 +66,11 @@
     align-items: center;
     margin-left: auto;
     margin-right: 10px;
-    font-size: 20px;
-    color: #555;
 
     button {
         position: relative;
-        width: 50px;
-        height: 50px;
-        margin-left: 25px;
-        border-radius: 10px;
-        background-color: #3b5998;
-        color: white;
-        font-size: 16px;
-        font-family: sans-serif;
-        border: 3px solid white;
-        cursor: pointer;
+        margin-left: 30px;
+        @include svg-btn(30px, 30px);
     }
 }
 
@@ -88,8 +78,8 @@
     &[data-newMsg="true"]::after {
         content: ''; /* 可以添加文字或图标 */
         position: absolute;
-        top: -5px;
-        right: -5px;
+        top: 18px;
+        right: -3px;
         width: 10px;
         height: 10px;
         background-color: red;

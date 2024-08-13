@@ -26,13 +26,8 @@
 }
 
 .input-btn {
-    padding: 10px 20px;
-    border: none;
-    background-color: #3b5998;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 20px;
+    margin: 10px;
+    @include svg-btn(40px, 40px);
 }
 
 #more {
@@ -52,11 +47,7 @@
     display: none;
 
     button {
-        width: 40px;
-        height: 40px;
-        border: none;
-        background-color: #aaa;
-        color: white;
         margin-right: 20px;
+        @include svg-btn(30px, 30px);
     }
 }

@@ -1,7 +1,7 @@
-import { getUserInfo } from "component/user";
-import { handleFriendMessage, handleGroupMessage } from "component/message";
-import { handleOnline, handleOffline, handleRespondOnline } from "component/online";
-import { MESSAGE_TYPE, CHAT_TYPE } from "utils/constant";
+import { getUserInfo } from "stores/user";
+import { handleFriendMessage, handleGroupMessage } from "stores/message";
+import { handleOnline, handleOffline, handleRespondOnline } from "stores/online";
+import { MESSAGE_TYPE } from "utils/constant";
 
 let socket;
 const messageQueue = [];

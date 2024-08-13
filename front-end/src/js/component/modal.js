@@ -1,8 +1,9 @@
 import { ITEM_TYPE } from "utils/constant";
 import { renderSearchResult } from "component/search";
 import { searchUser } from "api/search";
-import { getUserInfo, handleUserInfo } from "component/user";
-import { getUserOnlineState } from "component/online";
+import { getUserInfo, handleUserInfo, isFriend, isMyGroup } from "stores/user";
+import { getUserOnlineState } from "stores/online";
+import { handleGroupItemClick, handleFriendItemClick } from "component/friend";
 
 async function showGroupInfoModal(modal_content, groupInfo) {
     const groupDetails = groupInfo.groupDetails? groupInfo.groupDetails : '暂无简介'
@@ -11,7 +12,11 @@ async function showGroupInfoModal(modal_content, groupInfo) {
             <div class="avatar modal-avatar">
                 <img src="${groupInfo.groupAvatar}" alt="avatar">
             </div>
-            <h2 class="username">${groupInfo.groupName}</h2>
+            <h2 class="group-name">${groupInfo.groupName}</h2>
+            <div class="modal-operation-container">
+                
+            </div>
+            </div>
         </div>
         <p class="modal-subtitle">群组简介</p>
         <div class="group-details">${groupDetails}</div>
@@ -21,6 +26,29 @@ async function showGroupInfoModal(modal_content, groupInfo) {
         </div>
             
     `;
+
+    const operation_container = modal_content.querySelector(".modal-operation-container");
+    // 如果这个人是自己，添加按钮：修改
+    if(isMyGroup(groupInfo.groupId)){
+        operation_container.innerHTML += `
+            <button class="operation-button" id="send-user-msg-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="90%" height="90%" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+                    <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+                </svg>
+            </button>
+            <button class="operation-button" id="quit-group-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-backspace-reverse" viewBox="0 0 16 16">
+                    <path d="M9.854 5.146a.5.5 0 0 1 0 .708L7.707 8l2.147 2.146a.5.5 0 0 1-.708.708L7 8.707l-2.146 2.147a.5.5 0 0 1-.708-.708L6.293 8 4.146 5.854a.5.5 0 1 1 .708-.708L7 7.293l2.146-2.147a.5.5 0 0 1 .708 0z"/>
+                    <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7.08a2 2 0 0 0 1.519-.698l4.843-5.651a1 1 0 0 0 0-1.302L10.6 1.7A2 2 0 0 0 9.08 1H2zm7.08 1a1 1 0 0 1 .76.35L14.682 8l-4.844 5.65a1 1 0 0 1-.759.35H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7.08z"/>
+                </svg>
+            </button>
+        `;
+    }else{
+        operation_container.innerHTML += `
+            <button class="operation-button" id="add-group-btn">加入</button>
+        `;
+    }
 
     const group_members = modal_content.querySelector('#group-members');
 
@@ -39,9 +67,33 @@ async function showGroupInfoModal(modal_content, groupInfo) {
             </div>
         `
     }
+
+    handleGroupInfoModalBtns(operation_container, groupInfo);
     
     return modal_content;
 }
+
+async function handleGroupInfoModalBtns(operation_container, groupInfo){
+    const send_user_msg_btn = operation_container.querySelector("#send-user-msg-btn");
+    if(send_user_msg_btn){
+        send_user_msg_btn.addEventListener("click", async () => {
+            handleGroupItemClick(groupInfo);
+            operation_container.closest(".page-modal").querySelector(".close-modal").click();
+        })
+    }
+    const quit_group_btn = operation_container.querySelector("#quit-group-btn");
+    if(quit_group_btn){
+        quit_group_btn.addEventListener("click", async () => {
+        
+        });
+    }
+    const add_group_btn = operation_container.querySelector("#add-group-btn");
+    if(add_group_btn){
+        add_group_btn.addEventListener("click", async () => {
+        
+        })
+    }
+} 
 
 // 弹窗显示用户信息
 async function showUserInfoModal(modal_content, userInfo) {
@@ -52,10 +104,82 @@ async function showUserInfoModal(modal_content, userInfo) {
                 <img src="${userInfo.userAvatar}" alt="avatar">
             </div>
             <h2 class="username">${userInfo.username}</h2>
+            <div class="modal-operation-container">
+                
+            </div>
         </div>
         <p class="modal-subtitle">用户简介</p>
         <div class="user-details">${userDetails}</div>
-    `
+    `;
+
+    const operation_container = modal_content.querySelector(".modal-operation-container");
+    // 如果这个人是自己，添加按钮：修改
+    console.log("userInfo.userId", userInfo.userId)
+    if(userInfo.userId == (await getUserInfo({userId: -1})).userId){
+        operation_container.innerHTML += `
+            <button class="operation-button" id="edit-user-info-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-badge" viewBox="0 0 16 16">
+                    <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0h-7zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492V2.5z"/>
+                </svg>
+            </button>
+        `;
+    }else if(isFriend(userInfo.userId)){
+        operation_container.innerHTML += `
+            <button class="operation-button" id="send-msg-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+                    <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z"/>
+                </svg>
+            </button>
+            <button class="operation-button" id="delete-friend-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-dash" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM11 12a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3Zm0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                    <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                </svg>
+            </button>
+        `;
+    }else{
+        operation_container.innerHTML += `
+            <button class="operation-button" id="add-friend-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm.5-5a.5.5 0 0 0-1 0v1h-1a.5.5 0 0 0 0 1h1v1a.5.5 0 0 0 1 0v-1h1a.5.5 0 0 0 0-1h-1v-1Zm-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                    <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Z"/>
+                </svg>
+            </button>
+        `;
+    }
+
+    handleUserInfoModalBtns(operation_container, userInfo);
+}
+
+async function handleUserInfoModalBtns(operation_container, userInfo){
+    const edit_user_info_btn = operation_container.querySelector("#edit-user-info-btn");
+    if(edit_user_info_btn){
+        edit_user_info_btn.addEventListener("click", async () => {
+            // 跳转到个人肖像页面/profile，并传入用户信息
+            window.location.href = `/profile.html`;
+        });
+    }
+    const send_msg_btn = operation_container.querySelector("#send-msg-btn");
+    if(send_msg_btn){
+        send_msg_btn.addEventListener("click", async () => {
+            handleFriendItemClick(userInfo);
+            operation_container.closest(".page-modal").querySelector(".close-modal").click();
+        })
+    }
+    const delete_friend_btn = operation_container.querySelector("#delete-friend-btn");
+    if(delete_friend_btn){
+        delete_friend_btn.addEventListener("click", async () => {
+        
+        });
+    }
+    const add_friend_btn = operation_container.querySelector("#add-friend-btn");
+    if(add_friend_btn){
+        add_friend_btn.addEventListener("click", async () => {
+        
+        })
+    }
 }
 
 export function showInfoModal(info, itemType){
@@ -84,9 +208,9 @@ function listenInput(input_friend_name){
                 queryName: queryName,
                 userId: -1,
             };
-            searchUser(searchVO).then(response => {
-                if(response.ok) return response.json();
-            }).then(data => {
+            searchUser(searchVO)
+            .then(response => response.json())
+            .then(data => {
                 renderSearchResult(data);
             })
         }
@@ -101,7 +225,11 @@ export function showFindFriendModal(){
         <div id="find-modal-content" class="modal-content">
             <div id="find-friend-input">
                 <input type="text" id="input-friend-name" placeholder="请输入好友昵称">
-                <button id="find-friend-btn">查找</button>
+                <button id="find-friend-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                </button>
             </div>
             <div id="find-friend-result">
                 <span class="find-result-title">用户</span>

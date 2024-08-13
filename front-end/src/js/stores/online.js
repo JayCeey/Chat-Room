@@ -1,5 +1,5 @@
-import { getCurrentState } from "component/message";
-import { getUserInfo } from "component/user";
+import { getCurrentState } from "stores/message";
+import { getUserInfo } from "stores/user";
 import { CHAT_TYPE } from "utils/constant";
 
 // 客户端存储所有连接
@@ -7,18 +7,16 @@ const onlineUsers = {};
 
 export async function handleOnline(userId){
     const userInfo = await getUserInfo({userId: userId});
-    console.log(`用户${userInfo.username}上线拉`);
+    console.log(`用户${userInfo.username}上线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     onlineUsers[userInfo.userId] = true;
     handleChangeState(userInfo, true);
-    console.log(`当前的online-users${JSON.stringify(onlineUsers)}`);
 };
 
 export async function handleOffline(userId){
     const userInfo = await getUserInfo({userId: userId});
-    console.log(`用户${userInfo.username}下线拉`);
+    console.log(`用户${userInfo.username}下线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     delete onlineUsers[userInfo.userId];
     handleChangeState(userInfo, false);
-    console.log(`当前的online-users${JSON.stringify(onlineUsers)}`)
 };
 
 async function handleChangeState(userInfo, state){

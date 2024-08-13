@@ -2,8 +2,8 @@ import { searchUser } from "api/search";
 import { sendAddRequest } from "api/friend";
 import { showFindFriendModal } from "component/modal";
 import { ADD_FRIEND_TYPE, ADD_GROUP_TYPE } from "utils/constant";
-import { handleUserInfo, getUserInfo } from "component/user";
-import { handleGroupInfo } from "component/group";
+import { handleUserInfo, getUserInfo } from "stores/user";
+import { handleGroupInfo } from "stores/group";
 
 // 打开添加好友窗口
 export async function initAddButton(){
@@ -27,24 +27,20 @@ function clickSearchUserBtn() {
             userId: -1,
         };
  
-        searchUser(searchVO).then(response => {
-            if (!response.ok) {
-                throw new Error('网络错误：' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("返回data: ", data);
-            if(data.success){
-                renderSearchResult(data);
-                
-            }else{
-                throw new Error("查询失败");
-            }
-        })
-        .catch(error => {
-            console.error('错误:' + error);
-        });
+        searchUser(searchVO)
+            .then(response => response.json())
+            .then(data => {
+                console.log("返回data: ", data);
+                if(data.success){
+                    renderSearchResult(data);
+                    
+                }else{
+                    throw new Error("查询失败");
+                }
+            })
+            .catch(error => {
+                console.error('错误:' + error);
+            });
         }
  };
 
@@ -60,24 +56,20 @@ async function addGroup(groupItem) {
         "toGroupId": groupItem.groupId,
         "type": ADD_GROUP_TYPE.REQUEST,
     };
-    const isSuccess = await sendAddRequest(addFriendVO).then(response => {
-        if (!response.ok) {
-            throw new Error('网络错误：' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("返回data: ", data);
-        if(data.success){
-            // 这里要查询这个好友或群组的详细信息
-            return true; 
-        }else{
-            throw new Error("添加失败");
-        }
-    }).catch(error => {
-        console.error('错误:' + error);
-        return false;
-    });
+    const isSuccess = await sendAddRequest(addFriendVO)
+        .then(response => response.json())
+        .then(data => {
+            console.log("返回data: ", data);
+            if(data.success){
+                // 这里要查询这个好友或群组的详细信息
+                return true; 
+            }else{
+                throw new Error("添加失败");
+            }
+        }).catch(error => {
+            console.error('错误:' + error);
+            return false;
+        });
     return isSuccess;
 }
 
@@ -88,24 +80,20 @@ async function addFriend(userItem) {
         "toUserId": userItem.userId,
         "type": ADD_FRIEND_TYPE.REQUEST,
     };
-    const isSuccess = await sendAddRequest(addFriendVO).then(response => {
-        if (!response.ok) {
-            throw new Error('网络错误：' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("返回data: ", data);
-        if(data.success){
-            // 这里要查询这个好友或群组的详细信息
-            return true; 
-        }else{
-            throw new Error("添加失败");
-        }
-    }).catch(error => {
-        console.error('错误:' + error);
-        return false;
-    });
+    const isSuccess = await sendAddRequest(addFriendVO)
+        .then(response => response.json())
+        .then(data => {
+            console.log("返回data: ", data);
+            if(data.success){
+                // 这里要查询这个好友或群组的详细信息
+                return true; 
+            }else{
+                throw new Error("添加失败：", data.message);
+            }
+        }).catch(error => {
+            console.error('错误:' + error);
+            return false;
+        });
     return isSuccess;
 }
 

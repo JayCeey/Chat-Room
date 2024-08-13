@@ -9,6 +9,8 @@ module.exports = {
     entry: {
         login: './src/js/login.js',
         index: './src/js/index.js',
+        profile: './src/js/profile.js',
+        register: './src/js/register.js'
     },
     output: {
         filename: '[name].bundle.js',
@@ -23,6 +25,7 @@ module.exports = {
             api: path.resolve(__dirname, 'src/js/api/'),
             mock: path.resolve(__dirname, 'src/js/mock/'),
             utils: path.resolve(__dirname, 'src/js/utils/'),
+            stores: path.resolve(__dirname, 'src/js/stores/'),
             component: path.resolve(__dirname, 'src/js/component/'),
         }
     },
@@ -78,6 +81,16 @@ module.exports = {
             template: './src/views/index.html',
             filename: 'index.html',
             chunks: ['index'],
+        }),
+        new HtmlWebpackPlugin({ 
+            template: './src/views/profile.html',
+            filename: 'profile.html',
+            chunks: ['profile'],
+        }),
+        new HtmlWebpackPlugin({ 
+            template: './src/views/register.html',
+            filename: 'register.html',
+            chunks: ['register'],
         }),
         new MiniCssExtractPlugin({
             filename: '[name].style.css' // 生成的 CSS 文件名

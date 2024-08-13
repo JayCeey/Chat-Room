@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="user-profile" id="user-profile">
+            <img class="user-avatar" alt="User Avatar" class="user-avatar">
+            <h1 class="username" id="username-text"></h1>
+            <p class="user-details" id="user-details-text"></p>
+            <div class="button-container">
+                <button class="profile-button" id="edit-button">修改</button>
+                <button class="profile-button" id="back-button">确认</button>
+            </div>
+            
+        </div>
+
+        <!-- Hidden form for editing profile -->
+        <form class="edit-form" id="edit-form">
+            <img alt="User Avatar" class="user-avatar" id="avatar-img">
+            <input type="file" id="avatar-input" class="input-field" style="display: none;">
+            
+            <input type="text" id="username-input" class="input-field">
+            <textarea id="user-details-input" class="input-field"></textarea>
+            <button type="submit" class="save-button">Save</button>
+        </form>
+    </div>
+</body>
+</html>

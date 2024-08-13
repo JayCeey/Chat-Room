@@ -10,3 +10,13 @@ export function queryUserInfo(userId){
         },
     });
 };
+
+export function updateUserInfo(updateRequest){
+    return fetch(`${CONFIG.BASE_URL}/user/update`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateRequest),
+    });
+}

@@ -137,7 +137,7 @@ const mockNoticeInfo = [{
 
 const mockUserNotice = {
     "123": [{
-        notice_id: "1",
+        noticeId: "1",
         status: 0, // 0未读，1已读
     }],
     "456": [

@@ -28,12 +28,8 @@ export async function initLogin(){
     
         // 在这里进行信息上传操作
         // 例如，使用 fetch 发送请求到服务器
-        login(loginRequest).then(response => {
-            if (!response.ok) {
-                throw new Error('网络错误：' + response.statusText);
-            }
-            return response.json();
-        })
+        login(loginRequest)
+        .then(response => response.json())
         .then(data => {
             console.log("返回data: ", data);
             if(data.success){

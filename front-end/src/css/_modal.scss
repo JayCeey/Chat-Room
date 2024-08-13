@@ -67,6 +67,11 @@
     gap: 30px;
     margin-bottom: 20px;
     font-size: 24px;
+
+    .username, .group-name {
+        width: 200px;
+        word-wrap: break-word;
+    }
 }
 
 .user-details, .group-details {
@@ -129,15 +134,11 @@
 .operation-buttons {
     display: flex;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 10px;
     gap: 10px;
 
     button {
-        width: 50px;
-        height: 30px;
-        border-radius: 5px;
-        border: none;
-        cursor: pointer;
+        @include default-btn(60px, 30px);
     }
 }
 
@@ -192,16 +193,8 @@
 }
 
 #find-friend-btn {
-    width: 60px;
-    height: 30px;
     margin-bottom: 10px;
-    border-radius: 5px;
-    text-align: center;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
+    @include svg-btn(30px, 35px);
 }
 
 #find-friend-result{
@@ -213,10 +206,10 @@
 }
 
 .find-result-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #4CAF50;
+    color: black;
     text-align: center;
 }
 
@@ -244,7 +237,7 @@
     padding: 0 20px 0 20px;
 
     &:hover {
-        border: 3px solid #4CAF50;
+        border: 3px solid black;
         transform: scale(1.02);
         background-color: #ccc;
     }
@@ -262,11 +255,13 @@
     cursor: pointer;
 
     &[data-click="true"]:hover {
-        background-color: #3e8e41;
+        background-color: white;
+        color: black;
     }
 
     &[data-click="true"] {
-        background-color: #4CAF50;
+        background-color: black;
+        color: white;
     }
 
     &[data-click="false"] {
@@ -340,5 +335,16 @@
     &[data-online="false"] .member-avatar::after {
         background-color: red;
         border: 1px solid #fff;
+    }
+}
+
+.modal-operation-container {
+    display: flex;
+    justify-content: left;
+    gap: 20px;
+    top: 10px;
+
+    .operation-button {
+        @include svg-btn(30px, 30px);
     }
 }

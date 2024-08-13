@@ -9,6 +9,36 @@ $font-color: #333;
     padding: 0;
 }
 
+@mixin svg-btn($width: 70px, $height: 35px) {
+    width: $width;
+    height: $height;
+    border: none;
+    background-color: transparent;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+        transform: scale(1.2);
+    }
+}
+
+@mixin default-btn($width: 70px, $height: 35px) {
+    width: $width;
+    height: $height;
+    border: 3px solid black;
+    border-radius: 10px;
+    color: white;
+    background-color: black;
+    font-size: 16px;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+        transform: scale(1.2);
+        color: black;
+        background-color: white;
+    }
+}
+
 @mixin center {
     display: flex;
     justify-content: center;

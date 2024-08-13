@@ -136,6 +136,14 @@ app.get('/user', (req, res) => {
     }
 });
 
+// 更新用户信息
+app.put('/user/update', (req, res) => {
+    const receivedData = req.query;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
 // 获取朋友信息
 app.post('/getUserFriendInfo', (req, res) => {
     const receivedData = req.body;
@@ -151,7 +159,9 @@ app.post('/getUserFriendInfo', (req, res) => {
         groupInfo.groupMembers = []
         let groupMembersUserId = database.group_member[groupsId[i]];
         groupMembersUserId.forEach((memberId) => {
-            groupInfo.groupMembers.push(database.user_info[memberId]);
+            memberUserInfo = database.user_info[memberId];
+            memberUserInfo.userId = memberId;
+            groupInfo.groupMembers.push(memberUserInfo);
         });
         groupsInfo.push(groupInfo);
     }
@@ -238,26 +248,99 @@ app.post('/getUserChatInfo', (req, res) => {
 });
 
 // 添加好友
-app.post('/add', (req, res) => {
+app.post('/friend/add', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
     // 响应模拟数据
     res.json(mockSuccessData.mockSuccess);
 });
 
-// 获取最新通知
-app.post('/getLatestNotice', (req, res) => {
+// 发送拒绝某人的好友请求
+app.post('/friend/reject', (req, res) => {
     const receivedData = req.body;
     console.log('Received data:', receivedData);
     // 响应模拟数据
-    res.json(mockChatData.mockUserChatResponse);
+    res.json(mockSuccessData.mockSuccess);
 });
 
-// SSE系统推送通知服务
+// 发送接受好友请求
+app.post('/friend/accept', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送拒绝加入群聊请求
+app.post('/group/reject', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送接受加入群聊请求
+app.post('/group/accept', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送删除好友请求
+app.post('/friend/remove', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送移出群聊请求
+app.post('/group/remove', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送移出群聊请求
+app.post('/friend/result', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送移出群聊请求
+app.post('/group/result', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+// 发送收到消息请求，这里应该是一次性能够接受一大批消息并且批量已读 
+app.post('/notice/receive', (req, res) => {
+    const receivedData = req.body;
+    console.log('Received data:', receivedData);
+    // 响应模拟数据
+    res.json(mockSuccessData.mockSuccess);
+});
+
+
+// SSE系统订阅推送通知服务
 app.get('/notice', (req, res) => {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+
+    // 如果数据库中该用户有未读的消息，把未读的消息推送给他
+    
+    res.write(`data: `);
+
+    res.write(`${JSON.stringify(mockNoticeData.mockNoticeResponse)}\n\n`);
+
+    // 然后系统如果收到了新的通知，则也推送给他
   
     setInterval(() => {
         res.write(`data: ${JSON.stringify(mockNoticeData.mockNoticeStreamResponse)}\n\n`);
@@ -268,3 +351,4 @@ app.get('/notice', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
