@@ -21,11 +21,14 @@
 
 ### 页面展示
 #### 基本页面
-![](front-end\doc\img\基本页面.jpg){}
+<img src='.\front-end\doc\img\基本页面.jpg' width='400px'>
+
 #### 聊天与图片
-![](front-end\doc\img\聊天与图片.png){}
+<img src='.\front-end\doc\img\聊天与图片.png' width='400px'>
+
 #### 个人信息
-![](front-end\doc\img\个人信息.png){}
+<img src='.\front-end\doc\img\个人信息.png' width='400px'>
+
 #### 异步查询
 用户每输入一个字符就异步查询一次后端，并将当前的输入结果显示在输入框下方。
-![](front-end\doc\img\异步查询.png){}
+<img src='.\front-end\doc\img\异步查询.png' width='400px'>
