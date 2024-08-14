@@ -6,7 +6,6 @@ const { MESSAGE_TYPE } = require('./src/js/utils/constant.js');
 
 // 存储所有连接
 const online_users = {
-    
 }
 
 // 或者这里可以将新的聊天信息插入database中更新
