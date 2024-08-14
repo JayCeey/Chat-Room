@@ -326,7 +326,7 @@ export function showInfoModal(info, itemType){
 }
 
 function listenInput(input_friend_name){
-    input_friend_name.addEventListener('input', (event) => {
+    input_friend_name.addEventListener('input', async (event) => {
         const queryName = input_friend_name.value.trim();
         if (queryName.length > 0) {
             const searchVO = {
