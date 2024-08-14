@@ -1,6 +1,7 @@
 import { ITEM_TYPE } from "utils/constant";
 import { renderSearchResult } from "component/search";
 import { searchUser } from "api/search";
+import { friendResult } from "api/friend"
 import { getUserInfo, handleUserInfo, isFriend, isMyGroup } from "stores/user";
 import { getUserOnlineState } from "stores/online";
 import { handleGroupItemClick, handleFriendItemClick } from "component/friend";
@@ -73,6 +74,43 @@ async function showGroupInfoModal(modal_content, groupInfo) {
     return modal_content;
 }
 
+async function sendDeleteGroupRequest(groupInfo){
+    const userInfo = await getUserInfo({userId: -1});
+    const resultInfo = {
+        'from': userInfo.userId,
+        'to': groupInfo.userId,
+        'type': 3, // 删除
+    }
+    return await friendResult(resultInfo).then(response =>
+        response.json()
+    ).then(data => {
+        if(data.success){
+            return {success: true, msg: null};
+        }
+    }).catch(error => {
+        return {success: false, msg: error};
+    });
+}
+
+async function sendAddGroupRequest(groupInfo){
+    const userInfo = await getUserInfo({userId: -1});
+    const resultInfo = {
+        'from': userInfo.userId,
+        'to': groupInfo.groupId,
+        'type': 0, // 添加
+    }
+    return await friendResult(resultInfo).then(response =>
+        response.json()
+    ).then(data => {
+        if(data.success){
+            return {success: true, msg: null};
+        }
+    }).catch(error => {
+        return {success: false, msg: error};
+    });
+}
+
+
 async function handleGroupInfoModalBtns(operation_container, groupInfo){
     const send_user_msg_btn = operation_container.querySelector("#send-user-msg-btn");
     if(send_user_msg_btn){
@@ -84,13 +122,38 @@ async function handleGroupInfoModalBtns(operation_container, groupInfo){
     const quit_group_btn = operation_container.querySelector("#quit-group-btn");
     if(quit_group_btn){
         quit_group_btn.addEventListener("click", async () => {
-        
+            // 先发送删除请求
+            let {success, msg} = await sendDeleteGroupRequest(groupInfo);
+            if(success){
+                alert("删除成功");
+                // 将其从列表中移除
+                let group_id = groupInfo.groupId;
+
+                const groupItems = document.querySelectorAll('.group-item');
+
+                // 遍历这些元素
+                groupItems.forEach(item => {
+                    // 检查元素的 data-id 属性是否为 1
+                    if (item.getAttribute('data-id') == group_id) {
+                        // 如果是，则删除该元素
+                        item.remove();
+                    }
+                });
+            }else{
+                alert("删除失败：", msg);
+            }
         });
     }
     const add_group_btn = operation_container.querySelector("#add-group-btn");
     if(add_group_btn){
         add_group_btn.addEventListener("click", async () => {
-        
+            // 先发送添加请求
+            let {success, msg} = await sendAddGroupRequest(groupInfo);
+            if(success){
+                alert("请求成功");
+            }else{
+                alert("添加失败：", msg);
+            }
         })
     }
 } 
@@ -153,6 +216,42 @@ async function showUserInfoModal(modal_content, userInfo) {
     handleUserInfoModalBtns(operation_container, userInfo);
 }
 
+async function sendDeleteFriendRequest(friendInfo){
+    const userInfo = await getUserInfo({userId: -1});
+    const resultInfo = {
+        'from': userInfo.userId,
+        'to': friendInfo.userId,
+        'type': 3, // 删除
+    }
+    return await friendResult(resultInfo).then(response =>
+        response.json()
+    ).then(data => {
+        if(data.success){
+            return {success: true, msg: null};
+        }
+    }).catch(error => {
+        return {success: false, msg: error};
+    });
+}
+
+async function sendAddFriendRequest(friendInfo){
+    const userInfo = await getUserInfo({userId: -1});
+    const resultInfo = {
+        'from': userInfo.userId,
+        'to': friendInfo.userId,
+        'type': 0, // 添加
+    }
+    return await friendResult(resultInfo).then(response =>
+        response.json()
+    ).then(data => {
+        if(data.success){
+            return {success: true, msg: null};
+        }
+    }).catch(error => {
+        return {success: false, msg: error};
+    });
+}
+
 async function handleUserInfoModalBtns(operation_container, userInfo){
     const edit_user_info_btn = operation_container.querySelector("#edit-user-info-btn");
     if(edit_user_info_btn){
@@ -171,13 +270,39 @@ async function handleUserInfoModalBtns(operation_container, userInfo){
     const delete_friend_btn = operation_container.querySelector("#delete-friend-btn");
     if(delete_friend_btn){
         delete_friend_btn.addEventListener("click", async () => {
-        
+            // 先发送删除请求
+            let {success, msg} = await sendDeleteFriendRequest(userInfo);
+            if(success){
+                alert("删除成功");
+
+                // 将其从列表中移除
+                let friend_id = userInfo.userId;
+
+                const friendItems = document.querySelectorAll('.friend-item');
+
+                // 遍历这些元素
+                friendItems.forEach(item => {
+                    // 检查元素的 data-id 属性是否为 1
+                    if (item.getAttribute('data-id') == friend_id) {
+                        // 如果是，则删除该元素
+                        item.remove();
+                    }
+                });
+            }else{
+                alert("删除失败：", msg);
+            }
         });
     }
     const add_friend_btn = operation_container.querySelector("#add-friend-btn");
     if(add_friend_btn){
         add_friend_btn.addEventListener("click", async () => {
-        
+            // 先发送添加请求
+            let {success, msg} = await sendAddFriendRequest(userInfo);
+            if(success){
+                alert("请求成功");
+            }else{
+                alert("请求失败：", msg);
+            }
         })
     }
 }

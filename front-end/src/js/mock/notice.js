@@ -15,8 +15,9 @@ const mockNoticeStreamResponse = {
 const mockNoticeResponse = {
     notices: [
         {
+            notice_id: 1,
             notice_title: "新消息1",
-            notice_content: "你有新的消息",
+            notice_content: "这是一条普通消息",
             notice_sender: "服务器",
             timestamp: new Date(),
             success: true,
@@ -26,8 +27,9 @@ const mockNoticeResponse = {
             }
         },
         {
+            notice_id: 2,
             notice_title: "新消息2",
-            notice_content: "你有新的消息",
+            notice_content: "你收到一条好友请求",
             notice_sender: "服务器",
             timestamp: new Date(),
             success: true,
@@ -39,19 +41,23 @@ const mockNoticeResponse = {
             }
         },
         {
+            notice_id: 3,
             notice_title: "新消息3",
-            notice_content: "你有新的消息",
+            notice_content: "用户456申请加入Jayce一家人群聊",
             notice_sender: "服务器",
             timestamp: new Date(),
             success: true,
             type: NOTICE_TYPE.REQUEST_GROUP,
             data: {
-                groupId: 10001,
-                groupName: 'jayce群组',
-                groupAvatar: '',
+                userId: 456,
+                groupId: 10002,
+                groupName: 'Jayce一家人',
+                groupDetails: 'this is group2',
+                groupAvatar: "",
             }
         },
         {
+            notice_id: 4,
             notice_title: "新消息4",
             notice_content: "你有新的消息",
             notice_sender: "服务器",
@@ -65,6 +71,7 @@ const mockNoticeResponse = {
             }
         },
         {
+            notice_id: 5,
             notice_title: "新消息5",
             notice_content: "你有新的消息",
             notice_sender: "服务器",
@@ -72,12 +79,28 @@ const mockNoticeResponse = {
             success: true,
             type: NOTICE_TYPE.ACCEPT_GROUP,
             data: {
-                groupId: 10001,
-                groupName: 'jayce群组',
-                groupAvatar: '',
+                groupId: 10002,
+                groupName: 'Jayce一家人',
+                groupDetails: 'this is group2',
+                groupAvatar: "",
+                groupMembers: [
+                    {
+                        userId: 456,
+                        username: 'Tom',
+                        userDetails: 'hello, this is Tom',
+                        userAvatar: "",
+                    },
+                    {
+                        userId: 789,
+                        username: 'JayChou',
+                        userDetails: 'hello, this is Jaychou',
+                        userAvatar: "",
+                    },
+                ],
             }
         },
         {
+            notice_id: 6,
             notice_title: "新消息6",
             notice_content: "你有新的消息",
             notice_sender: "服务器",
@@ -91,6 +114,7 @@ const mockNoticeResponse = {
             }
         },
         {
+            notice_id: 7,
             notice_title: "新消息7",
             notice_content: "你有新的消息",
             notice_sender: "服务器",
@@ -98,9 +122,10 @@ const mockNoticeResponse = {
             success: true,
             type: NOTICE_TYPE.DELETE_GROUP,
             data: {
-                groupId: 10001,
-                groupName: 'jayce群组',
-                groupAvatar: '',
+                groupId: 10002,
+                groupName: 'Jayce一家人',
+                groupDetails: 'this is group2',
+                groupAvatar: "",
             }
         },
     ],

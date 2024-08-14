@@ -22,6 +22,20 @@ export function getNoticeList(){
     return noticeList;
 }
 
+function findNoticeIndex(notice_id){
+    return noticeList.findIndex((notice) => notice.notice_id == notice_id);
+}
+
+export function deleteNotice(notice_id){
+    let notice_idx = findNoticeIndex(notice_id);
+    if(notice_idx != -1){
+        noticeList.splice(notice_idx, 1);
+        return true;
+    }else{
+        return false;
+    }
+}
+
 // 监听服务器是否发送消息回来
 export async function initNoticeListner(){
     const eventSource = new EventSource(`${CONFIG.BASE_URL}/notice`);
@@ -42,14 +56,14 @@ export async function sendRejectFriendRequest(notice){
         'to': notice.data.senderId,
         'type': 1, // 同意
     }
-    friendResult(resultInfo).then(response =>
+    return await friendResult(resultInfo).then(response =>
         response.json()
     ).then(data => {
         if(data.success){
-            alert("发送成功");
+            return {success: true, msg: null};
         }
     }).catch(error => {
-        alert("错误：", error);
+        return {success: false, msg: error};
     });
 }
 
@@ -58,16 +72,33 @@ export async function sendAcceptFriendNotice(notice){
     const resultInfo = {
         'from': userInfo.userId,
         'to': notice.data.senderId,
-        'type': 0, // 同意
+        'type': 0, // 不同意
     }
-    friendResult(resultInfo).then(response =>
+    return await friendResult(resultInfo).then(response =>
         response.json()
     ).then(data => {
         if(data.success){
-            alert("添加成功");
+            return {success: true, msg: null};
         }
     }).catch(error => { 
-        alert("错误：", error);
+        return {success: false, msg: error};
     });
 }
 
+export async function sendDeleteFriendNotice(notice){
+    const userInfo = await getUserInfo({userId: -1});
+    const resultInfo = {
+        'from': userInfo.userId,
+        'to': notice.data.senderId,
+        'type': 2, // 删除
+    }
+    return await friendResult(resultInfo).then(response =>
+        response.json()
+    ).then(data => {
+        if(data.success){
+            return {success: true, msg: null};
+        }
+    }).catch(error => { 
+        return {success: false, msg: error};
+    });
+}

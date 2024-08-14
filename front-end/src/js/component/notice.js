@@ -1,22 +1,28 @@
 
-import { NOTICE_TYPE } from 'utils/constant.js';
-import { addUnreadCnt, clearUnreadCnt, getNoticeList, sendRejectFriendRequest, sendAcceptFriendNotice } from 'stores/notice.js';
-
+import { NOTICE_TYPE, CHAT_TYPE } from 'utils/constant.js';
+import { addUnreadCnt, clearUnreadCnt, getNoticeList, sendRejectFriendRequest, sendAcceptFriendNotice, deleteNotice } from 'stores/notice.js';
+import { handleUserInfo } from 'stores/user.js';
+import { handleGroupInfo } from 'stores/group.js';
+import { initFriendList, initGroupList } from 'component/friend.js';
+import { addNewChat } from 'stores/message.js';
 
 async function addNoticeButtons(notice, operation_buttons){
     const notice_type = notice.type;
-    let read_btn = document.createElement('button');
-    read_btn.className = 'read-btn';
-    read_btn.textContent = '查看';
-    read_btn.addEventListener('click', () => {
-        console.log("查看");
-    });
-    operation_buttons.appendChild(read_btn);
+    if(notice.notice_content.length >= 16){
+        let read_btn = document.createElement('button');
+        read_btn.className = 'read-btn';
+        read_btn.textContent = '查看';
+        read_btn.addEventListener('click', () => {
+            clickReadNoticeBtn(read_btn);
+        });
+        operation_buttons.appendChild(read_btn);
+    }
     if(notice_type == NOTICE_TYPE.REQUEST_FRIEND || notice_type == NOTICE_TYPE.REQUEST_GROUP){
         let add_btn = document.createElement('button');
         add_btn.textContent = '添加';
         add_btn.addEventListener('click', async () => {
             clickAcceptFriendBtn(notice);
+            deleteNoticeItem(add_btn);
         });
         operation_buttons.appendChild(add_btn);
     }
@@ -25,6 +31,7 @@ async function addNoticeButtons(notice, operation_buttons){
         reject_btn.textContent = '拒绝';
         reject_btn.addEventListener('click', () => {
             clickRejectFriendBtn(notice);
+            deleteNoticeItem(reject_btn);
         });
         operation_buttons.appendChild(reject_btn);
     }
@@ -33,26 +40,67 @@ async function addNoticeButtons(notice, operation_buttons){
     delete_btn.textContent = '删除';
     delete_btn.addEventListener('click', () => {
         console.log("删除");
+        clickDeleteNoticeBtn(delete_btn);
     });
     operation_buttons.appendChild(delete_btn);
 }
 
 async function clickAcceptFriendBtn(notice){
     console.log("添加好友")
-    sendAcceptFriendNotice(notice);
+
+    let {success, msg} = await sendAcceptFriendNotice(notice);
+    if(!success){
+        alert("错误：", msg);
+        return;
+    }
+
+    if(notice.type == NOTICE_TYPE.REQUEST_FRIEND){
+        let userInfo = notice.data; // 获取好友信息
+
+        handleUserInfo(userInfo);
+        // 获取在线状态并设置对应的在线状态
+        initFriendList(userInfo);
+        addNewChat(CHAT_TYPE.FRIEND, userInfo.userId);   
+    }
+    
+    alert("添加成功！");
+}
+
+async function deleteNoticeItem(btn){
+    let notice_item = btn.closest('.notice-item');
+    notice_item.remove();
 }
 
 async function clickRejectFriendBtn(notice){
     console.log("拒绝好友")
-    sendRejectFriendRequest(notice);
+    let {success, msg} = await sendRejectFriendRequest(notice);
+    if(success){
+        alert("发送成功！");
+        deleteNotice(notice.noticeId);
+    }else{
+        alert("错误：", msg);
+        return;
+    }
 }
 
-async function clickDeleteNoticeBtn(){
-    
+async function clickDeleteNoticeBtn(delete_btn){
+    let notice_item = delete_btn.closest('.notice-item');
+    notice_item.remove();
+    if(deleteNotice(notice_item.getAttribute("data-notice-id"))){
+        alert("删除成功！");
+    }
 }
 
-async function clickReadNoticeBtn(){
-
+async function clickReadNoticeBtn(read_btn){
+    let notice_item = read_btn.closest('.notice-item');
+    let notice_content = notice_item.querySelector('.notice-content');
+    if (notice_content.classList.contains('expanded')) {
+        notice_content.classList.remove('expanded');
+        read_btn.textContent = '查看';
+    }else{
+        notice_content.classList.add('expanded');
+        read_btn.textContent = '收回';
+    }
 }
 
 async function loadNoticeList(notice_list){
@@ -61,6 +109,7 @@ async function loadNoticeList(notice_list){
         let notice = noticeList[i];
         let notice_item = document.createElement('div');
         notice_item.className= 'notice-item';
+        notice_item.setAttribute("data-notice-id", notice.notice_id);
         notice_item.innerHTML = `
             <div class="avatar notice-avatar"></div>
             <div class="notice-title-container">
@@ -68,9 +117,9 @@ async function loadNoticeList(notice_list){
                 <div class="notice-timestamp">${notice.timestamp}</div>
             </div>
             <div class="notice-content">
-                ${notice.notice_content}
-                <div class="operation-buttons">
-                </div>
+                ${notice.notice_content}    
+            </div>
+            <div class="operation-buttons">
             </div>
             <div class="notice-sender">发送人：${notice.notice_sender}</div>
         `;
