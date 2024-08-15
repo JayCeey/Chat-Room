@@ -19,7 +19,7 @@ module.exports = {
     mode: 'development',
     resolve: {
         alias: {
-            public: path.resolve(__dirname, 'src/public/'),
+            static: path.resolve(__dirname, 'public/static/'),
             css: path.resolve(__dirname, 'src/css/'),
             assets: path.resolve(__dirname, 'src/assets'),
             api: path.resolve(__dirname, 'src/js/api/'),

@@ -9,6 +9,21 @@ $font-color: #333;
     padding: 0;
 }
 
+.alert {
+    position: fixed;
+    top: -100px; /* 初始位置：隐藏在页面上方 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: 100%;
+    max-width: 600px; /* 控制宽度 */
+}
+
+.alert.show {
+    position: fixed;
+    top: 50px; /* 显示警告框 */
+}
+
 @mixin svg-btn($width: 70px, $height: 35px) {
     width: $width;
     height: $height;

@@ -1,5 +1,6 @@
 import "css/index.scss";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "static/css/bootstrap.min.css";
+import "static/js/bootstrap.min.js";
 import { initNotice } from "component/notice";
 import { initNoticeListner } from "stores/notice";
 import { initMoreBtn } from "component/more";

@@ -1,4 +1,5 @@
 import {login} from 'api/login.js';
+import { showAlertBox } from 'component/alert.js';
 import md5 from 'utils/encrypt.js';
 
 export async function initLogin(){
@@ -34,25 +35,24 @@ export async function initLogin(){
             console.log("返回data: ", data);
             if(data.success){
                 // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
-                alert("登陆成功，正在跳转...");
-                
+
                 sessionStorage.setItem('userSessionInfo', JSON.stringify({
                     'userId': data.userId,
                     'username': data.username,
                     'userRole': data.userRole,
                 }));
-    
+
+                showAlertBox("登陆成功")
                 window.location.href = "index.html"; // 跳转到/index.html
-                return;
             }else{
-                alert("登陆失败：" + data.message);
                 throw new Error(data.message);
             }
         })
         .catch(error => {
             console.error('错误:' + error);
             document.getElementById('message').textContent = error;
+
+            showAlertBox(error);
         });
-    });
-    
+    }); 
 }
