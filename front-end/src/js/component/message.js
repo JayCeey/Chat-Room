@@ -16,6 +16,17 @@ async function initSendPic(){
     document.getElementById('pic-input').addEventListener('change', async function() {
         let file = this.files[0];
         if (file) {
+            // 获取文件扩展名
+            let fileName = file.name;
+            let fileExtension = fileName.split('.').pop().toLowerCase();
+            // 检查文件扩展名是否为png
+            if (fileExtension !== 'png') {
+                // 文件格式不正确，显示错误信息
+                alert('只接受 PNG 格式的文件');
+                // 清空文件输入框
+                this.value = '';
+            }
+
             let currentChatType = getCurrentChatType();
             let currentChatId = getCurrentChatId();
             if(currentChatType == CHAT_TYPE.NONE){

@@ -4,8 +4,8 @@ import { logout } from 'api/login';
 export async function initLogoutBtn(){
     document.getElementById('logout-button').addEventListener('click', () => {
         logout()
-        .then(response => response.json())
-        .then(data => {
+        .then(res => {
+            const data = res.data;
             console.log("返回data: ", data);
             if(data.success){
                 // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
@@ -14,7 +14,7 @@ export async function initLogoutBtn(){
                 window.location.href = 'login.html';
                 return;
             }else{
-                alert("登出失败：" + data.message);
+                alert("登出失败：" + data.msg);
             }
         })
         .catch(error => {

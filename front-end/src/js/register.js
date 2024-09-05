@@ -1,5 +1,6 @@
 import 'css/register.scss'
 import 'static/css/bootstrap.min.css'
+import md5 from 'utils/encrypt.js';
 
 import { register } from 'api/login';
 
@@ -11,9 +12,10 @@ form.addEventListener('submit', function(event) {
 
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const encrypted_pwd = md5(password);
 
     // 发送网络请求到后端
-    register({ username, password })
+    register({ "username": username, "password": encrypted_pwd })
         .then(response => response.json())
         .then(data => {
             if (data.success) {

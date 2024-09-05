@@ -1,7 +1,18 @@
 import CONFIG from '../config.js';
+import request from 'utils/request';
+
+export function refresh(){
+    return fetch(`${CONFIG.AUTH_URL}/ua/token/refresh`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+    })
+}
 
 export function login(loginRequest){
-    return fetch(`${CONFIG.BASE_URL}/login`, {
+    return fetch(`${CONFIG.AUTH_URL}/ua/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -12,22 +23,20 @@ export function login(loginRequest){
 };
 
 export function logout(){
-    return fetch(`${CONFIG.BASE_URL}/logout`, {
-        method: 'GET',
+    return request.post(`${CONFIG.AUTH_URL}/logout`, {}, {
+        withCredentials: true,
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
     })
 };
 
 export function register(userInfo){
-    return fetch(`${CONFIG.BASE_URL}/register`, {
+    return fetch(`${CONFIG.USER_URL}/user/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(userInfo),
-        credentials: 'include',
-    })
+    }) 
 }

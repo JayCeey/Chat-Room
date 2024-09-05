@@ -2,6 +2,7 @@ import { getUserInfo } from "stores/user";
 import { handleFriendMessage, handleGroupMessage } from "stores/message";
 import { handleOnline, handleOffline, handleRespondOnline } from "stores/online";
 import { MESSAGE_TYPE } from "utils/constant";
+import CONFIG from '../config.js';
 
 let socket;
 const messageQueue = [];
@@ -10,16 +11,18 @@ const messageQueue = [];
 export async function initWebsocket() {
 
     try{
-        socket = new WebSocket('ws://localhost:3020');
+        socket = new WebSocket(CONFIG.WEBSOCKET_URL);
 
         // 连接打开时的事件处理（上线时请求历史消息）
         socket.addEventListener('open', async (event) => {
             console.log('WebSocket connection established');
 
-            const userInfo = await getUserInfo({userId: -1});
             // 向服务器发送上线消息
             sendMessage({'type': MESSAGE_TYPE.ONLINE, 
-                         'from': userInfo.userId,});
+                         'message': '用户上线',
+                         'data': JSON.stringify({
+                            'accessToken': sessionStorage.getItem("accessToken")
+                         }),});
 
             while(messageQueue.length > 0){
                 sendMessage(messageQueue.shift());
@@ -58,7 +61,7 @@ function onMessage(data){
     }else if(data.type == MESSAGE_TYPE.OFFLINE){
         handleOffline(data.user);
     }else if(data.type == MESSAGE_TYPE.RESPOND_ONLINE){
-        handleRespondOnline(data.online_users);
+        handleRespondOnline(data.onlineUsers);
     }
 }
 
@@ -79,8 +82,12 @@ export function sendMessage(data){
 }
 
 export async function askUsersOnlineState(usersQuery){
-    sendMessage({
+    const data = {
         type: MESSAGE_TYPE.ASK_ONLINE,
-        users: usersQuery.users,
-    });
+        data: JSON.stringify({
+            users: usersQuery.users,
+        }),
+    }
+    console.log("询问这些用户是否上线", data)
+    sendMessage(data);
 }

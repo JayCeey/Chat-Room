@@ -1,12 +1,11 @@
 import CONFIG from '../config.js';
+import request from 'utils/request';
 
-export function history(userInfo){
-    return fetch(`${CONFIG.BASE_URL}/getUserChatInfo`, {
-        method: 'POST',
+export function history(){
+    return request.post(`${CONFIG.MESSAGE_URL}/history`, {}, {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userInfo),
-        credentials: 'include',
+        withCredentials: true,
     });
 };

@@ -7,15 +7,15 @@ const onlineUsers = {};
 
 export async function handleOnline(userId){
     const userInfo = await getUserInfo({userId: userId});
-    console.log(`用户${userInfo.username}上线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     onlineUsers[userInfo.userId] = true;
+    console.log(`用户${userInfo.username}上线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     handleChangeState(userInfo, true);
 };
 
 export async function handleOffline(userId){
     const userInfo = await getUserInfo({userId: userId});
-    console.log(`用户${userInfo.username}下线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     delete onlineUsers[userInfo.userId];
+    console.log(`用户${userInfo.username}下线拉, 当前的online-users${JSON.stringify(onlineUsers)}`);
     handleChangeState(userInfo, false);
 };
 
@@ -44,7 +44,9 @@ export async function getUserOnlineState(userInfo){
 }
 
 export function handleRespondOnline(usersId){
-    usersId.forEach(userId => {
-        handleOnline(userId);
-    });
+    if(usersId){
+        usersId.forEach(userId => {
+            handleOnline(userId);
+        });
+    }
 }

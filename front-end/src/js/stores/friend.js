@@ -18,17 +18,18 @@ export async function getOnlineNum(groupMembers){
 }
 
 export async function getUserFriendsList(){
-    const userInfo = await getUserInfo({userId: -1});
     const friendQuery = {
-        userId: userInfo.userId,
+        userId: -1,
     }
     return getFriends(friendQuery)
-            .then(response => response.json())
-            .then(data => {
-                if(!data.success){
+            .then(response => response.data)
+            .then(res => {
+                if(!res.success){
                     throw new Error('获取好友列表失败');
                 }
-                const friendList = data.friends;
+                const data = res.data;
+                console.log("获取friend的data是：", data)
+                const friendList = data.friendList;
                 
                 // 向websocket服务器询问这些好友是否上线
                 let usersQuery = {users: []};
@@ -43,17 +44,17 @@ export async function getUserFriendsList(){
                     addNewChat(CHAT_TYPE.FRIEND, friendInfo.userId);
                 }
 
-                const groupList = data.groups;
+                // const groupList = data.groups;
 
-                for (let i = 0; i < groupList.length; i++) {
-                    let groupInfo = groupList[i];
-                    groupInfo.groupMembers.forEach(memberInfo => {
-                        askUsersIdSet.add(memberInfo.userId);
-                    });
-                    handleGroupInfo(groupInfo);
-                    initGroupList(groupInfo);
-                    addNewChat(CHAT_TYPE.GROUP, groupInfo.groupId);
-                }
+                // for (let i = 0; i < groupList.length; i++) {
+                //     let groupInfo = groupList[i];
+                //     groupInfo.groupMembers.forEach(memberInfo => {
+                //         askUsersIdSet.add(memberInfo.userId);
+                //     });
+                //     handleGroupInfo(groupInfo);
+                //     initGroupList(groupInfo);
+                //     addNewChat(CHAT_TYPE.GROUP, groupInfo.groupId);
+                // }
 
                 usersQuery.users = Array.from(askUsersIdSet);
                 askUsersOnlineState(usersQuery);

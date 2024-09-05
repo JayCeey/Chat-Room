@@ -23,30 +23,24 @@ function clickSearchUserBtn() {
         alert('请输入用户名');
     } else {
         const searchVO = {
-            queryName: input_value,
+            key: input_value,
             userId: -1,
         };
  
         searchUser(searchVO)
-            .then(response => response.json())
-            .then(data => {
-                console.log("返回data: ", data);
-                if(data.success){
-                    renderSearchResult(data);
-                    
-                }else{
-                    throw new Error("查询失败");
-                }
-            })
-            .catch(error => {
-                console.error('错误:' + error);
-            });
-        }
+        .then(response => response.data)
+        .then(res => {
+            const data = res.data;
+            console.log(data);
+            renderSearchResult(data);
+        })
+    }
  };
 
  export function renderSearchResult(data){
-    renderSearchUserResult(data.friends);
-    renderSearchGroupResult(data.groups);
+    renderSearchUserResult(data);
+    // renderSearchUserResult(data.friends);
+    // renderSearchGroupResult(data.groups);
  }
 
 async function addGroup(groupItem) {

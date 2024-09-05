@@ -57,8 +57,9 @@ export async function sendRejectFriendRequest(notice){
         'type': 1, // 同意
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
@@ -75,12 +76,13 @@ export async function sendAcceptFriendNotice(notice){
         'type': 0, // 不同意
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
-    }).catch(error => { 
+    }).catch(error => {
         return {success: false, msg: error};
     });
 }
@@ -93,12 +95,13 @@ export async function sendDeleteFriendNotice(notice){
         'type': 2, // 删除
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
-    }).catch(error => { 
+    }).catch(error => {
         return {success: false, msg: error};
     });
 }

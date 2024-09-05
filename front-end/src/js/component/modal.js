@@ -82,8 +82,9 @@ async function sendDeleteGroupRequest(groupInfo){
         'type': 3, // 删除
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
@@ -100,8 +101,9 @@ async function sendAddGroupRequest(groupInfo){
         'type': 0, // 添加
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
@@ -224,8 +226,9 @@ async function sendDeleteFriendRequest(friendInfo){
         'type': 3, // 删除
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
@@ -242,8 +245,9 @@ async function sendAddFriendRequest(friendInfo){
         'type': 0, // 添加
     }
     return await friendResult(resultInfo).then(response =>
-        response.json()
-    ).then(data => {
+        response.data
+    ).then(res => {
+        const data = res.data;
         if(data.success){
             return {success: true, msg: null};
         }
@@ -330,12 +334,14 @@ function listenInput(input_friend_name){
         const queryName = input_friend_name.value.trim();
         if (queryName.length > 0) {
             const searchVO = {
-                queryName: queryName,
+                key: queryName,
                 userId: -1,
             };
             searchUser(searchVO)
-            .then(response => response.json())
-            .then(data => {
+            .then(response => response.data)
+            .then(res => {
+                const data = res.data;
+                console.log(data);
                 renderSearchResult(data);
             })
         }

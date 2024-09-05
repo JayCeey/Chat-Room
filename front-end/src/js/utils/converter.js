@@ -33,7 +33,7 @@ export function chatType2messageType(chatType){
 export function sendMessageConverter(sendMessageInfo){
     const convertedMessage = {};
     convertedMessage.type = chatType2messageType(sendMessageInfo.msgType);
-    convertedMessage.content = sendMessageInfo.msgContent;
+    convertedMessage.message = sendMessageInfo.msgContent;
     convertedMessage.from = sendMessageInfo.senderId;
     convertedMessage.to = sendMessageInfo.to;
     convertedMessage.timestamp = sendMessageInfo.msgCreateTime;
@@ -43,10 +43,10 @@ export function sendMessageConverter(sendMessageInfo){
 
 export function recvMessageConverter(recvMessageInfo){
     const convertedMessage = {};
-    convertedMessage.msgId = "3";
-    convertedMessage.msgContent = recvMessageInfo.content;
-    convertedMessage.senderId = recvMessageInfo.from;
-    convertedMessage.msgCreateTime = recvMessageInfo.timestamp;
+    convertedMessage.msgId = recvMessageInfo.msgId;
+    convertedMessage.msgContent = recvMessageInfo.msgContent;
+    convertedMessage.senderId = recvMessageInfo.senderId;
+    convertedMessage.msgCreateTime = recvMessageInfo.msgCreateTime;
     convertedMessage.status = 0;
     convertedMessage.form = recvMessageInfo.form;
 

@@ -43,18 +43,20 @@ function setUserDefaultAvatar(userInfo){
 async function getUserInfoById(userId){ 
     if(!userId) throw new Error("userId不能为空");
     return queryUserInfo(userId)
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
+        .then(response => response.data)
+        .then(res => {
+            console.log(res)
+            if(res.success){
+                const data = res.data;
                 const userInfo = {
-                    "userId": userId, 
+                    "userId": data.userId, 
                     "username": data.username,
                     "userAvatar": data.userAvatar,
                     "userDetails": data.userDetails,
                 };
                 return userInfo;
             }else{
-                throw new Error(data.message);
+                throw new Error(res.msg);
             }
         })
         .catch(error => {
@@ -78,20 +80,24 @@ export async function getUserInfo(userQuery){
 };
 
 export async function initCurrentUserInfo(){
-    const userSessionInfo = getUserSessionInfo();
-    const userQuery = {userId: userSessionInfo.userId};
-    const userInfo = await getUserInfo(userQuery);
+    const flag = await checkAvailable();
+    if(!flag) return; // 如果用户未登录，则直接返回
+    const userInfo = await getUserInfoById(-1);
+    console.log("当前用户：", userInfo);
     handleUserInfo(userInfo);
     userContext.currentUserInfo = userInfo; // 设置当前用户信息
 }
 
-// 只是获取简单的存储在本地的用户基本信息如uid, 用户名等
-function getUserSessionInfo(){
-    const userSessionInfo = JSON.parse(sessionStorage.getItem("userSessionInfo"));
-    if(!userSessionInfo){
+async function checkAvailable(){
+    const accessToken = sessionStorage.getItem("accessToken");
+    if(!accessToken){
+        // 首先刷新refreshToken
+        // 如果refreshToken不存在，则说明用户未登录，直接跳转到用户登录页面；
+        // 如果成功刷新，那么重新初始化用户信息
         console.log("用户未登录");
         alert("请先登录");
         window.location.href = "login.html";
+        return false;
     }
-    return userSessionInfo;
+    return true;
 }

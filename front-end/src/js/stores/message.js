@@ -53,6 +53,7 @@ function checkChatInfo(chatType, chatId){
 
 export function initChatInfo(chatType, chatId){
     if(!checkChatInfo(chatType, chatId)){
+        console.log(`调用checkChat: ${chatId}`)
         // 初始化聊天信息
         chatMessages[chatType][chatId] = {
             'history': [],
@@ -88,34 +89,38 @@ export function setCurrentState(state){
 
 // 获取历史的消息
 export async function getHistoryMessages() { 
-    const userInfo = await getUserInfo({userId: -1});
-    const userQuery = {userId: userInfo.userId}
-    history(userQuery)
-    .then(response => response.json())
-    .then(response => {
-        if(!response.success){
+    history()
+    .then(response => response.data)
+    .then(res => {
+        if(!res.success){
             throw new Error('获取历史消息失败');
         }
-
-        let data = response.data;
+        console.log("这是我收到的历史消息: ", res)
+        const friendChatsInfo = res.data;
 
         // 群组消息
-        const groupChatsInfo = data.groupChatsInfo;
-        Object.keys(groupChatsInfo).forEach(groupId => {
-            initChatInfo(CHAT_TYPE.GROUP, groupId);
-            chatMessages[CHAT_TYPE.GROUP][groupId].history = groupChatsInfo[groupId];
-        })
+        // const groupChatsInfo = data.groupChatsInfo;
+        // Object.keys(groupChatsInfo).forEach(groupId => {
+        //     initChatInfo(CHAT_TYPE.GROUP, groupId);
+        //     chatMessages[CHAT_TYPE.GROUP][groupId].history = groupChatsInfo[groupId];
+        // })
 
         // 好友消息
-        const friendChatsInfo = data.userChatsInfo;
-        Object.keys(friendChatsInfo).forEach(friendUserId => {
-            let chatInfo = friendChatsInfo[friendUserId];
-            let chatHistory = chatInfo.history;
+        // Object.keys(friendChatsInfo).forEach(friendUserId => {
+        //     let chatInfo = friendChatsInfo[friendUserId];
+        //     let chatHistory = chatInfo.history;
+        //     initChatInfo(CHAT_TYPE.FRIEND, friendUserId);
+        //     chatMessages[CHAT_TYPE.FRIEND][friendUserId].history = chatHistory;
+        // })
+
+        console.log("当前的chat messages", chatMessages)
+
+        friendChatsInfo.forEach(friendChatInfo => {
+            let friendUserId = friendChatInfo.userId;
+            let chatHistory = friendChatInfo.messageVOList;
             initChatInfo(CHAT_TYPE.FRIEND, friendUserId);
             chatMessages[CHAT_TYPE.FRIEND][friendUserId].history = chatHistory;
         })
-
-        console.log("当前的chat messages", chatMessages)
     })
     .catch(error => {
         console.error('错误:' + error);
@@ -157,17 +162,17 @@ export async function handleFriendMessage(data){
     const messageInfo = recvMessageConverter(data);
     const messageText = messageInfo.msgContent; //  挂载到左侧用户发送的消息栏上
     if (messageText) {
-        addMessage2ChatMessages(CHAT_TYPE.FRIEND, data.from, messageInfo);
-        if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.from){
+        addMessage2ChatMessages(CHAT_TYPE.FRIEND, data.senderId, messageInfo);
+        if(currentChatType == CHAT_TYPE.FRIEND && currentChatId == data.senderId){
             // 如果是当前窗口的，那么就直接显示，不需要添加到未读消息中
-            const fromUserInfo = await getUserInfo({userId: data.from})
+            const fromUserInfo = await getUserInfo({userId: data.senderId})
 
             handleUserInfo(fromUserInfo);
 
             addMessage(SEND_TYPE.OTHER, fromUserInfo, messageInfo);
         }else{
             // 不是当前窗口的，那么就添加到未读消息中，其中已经保证了chat_info的初始化
-            addUnreadMessage(CHAT_TYPE.FRIEND, data.from);
+            addUnreadMessage(CHAT_TYPE.FRIEND, data.senderId);
         }
     }
 }

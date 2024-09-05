@@ -5,6 +5,8 @@ import { Buffer } from 'buffer';
 
 let userInfo;
 
+let avatarBase64 = '';
+
 document.addEventListener('DOMContentLoaded', async function() {
     await initCurrentUserInfo();
     userInfo = await getUserInfo({userId: -1});
@@ -35,15 +37,21 @@ document.getElementById("avatar-img").addEventListener("click", function(event){
 document.getElementById("avatar-input").addEventListener("change", async function(event){
     const file = event.target.files[0];
     if(file){
+        // document.querySelectorAll('.user-avatar').forEach(img => {
+        //     img.src = file.name;
+        // });
+
         let reader = new FileReader();
 
         reader.onload = function(e) {
-            document.querySelectorAll('.user-avatar').forEach(img => {
-                img.src = e.target.result;
-            });
+            // 获取文件的字节流
+            const arrayBuffer = e.target.result;
+
+            console.log("这是字节流：", arrayBuffer)
+
+            avatarBase64 = Buffer.from(arrayBuffer).toString('base64');
         }
-        reader.readAsDataURL(file);
-        this.value = '';
+        reader.readAsArrayBuffer(file);
     }
 })
 
@@ -52,21 +60,15 @@ document.getElementById('edit-form').addEventListener('submit', function(event) 
     
     // Update avatar
     const avatarInput = document.getElementById('avatar-input').value;
-    let arrayBuffer = Buffer.from(avatarInput, 'base64');
-    let blob = new Blob([arrayBuffer], { type: 'png' });
-    let imageUrl = URL.createObjectURL(blob);
-    const updateAvatar = imageUrl;
-
-    console.log(updateAvatar)
-
+    
     // Update username and details
     const usernameInput = document.getElementById('username-input').value;
     const detailsInput = document.getElementById('user-details-input').value;
     
     const updateRequest = {userId: userInfo.userId};
 
-    if (avatarInput != userInfo.userAvatar) {
-        updateRequest.userAvatar = updateAvatar;
+    if (avatarInput) {
+        updateRequest.userAvatar = avatarBase64;
     }
     if (usernameInput) {
         updateRequest.username = usernameInput;
@@ -77,8 +79,8 @@ document.getElementById('edit-form').addEventListener('submit', function(event) 
 
     // Send update request to server
     updateUserInfo(updateRequest)
-    .then(response => response.json())
-    .then(data => {
+    .then(res => {
+        const data = res.data;
         if (data.success) {
             alert("更新成功");
             
@@ -96,6 +98,7 @@ document.getElementById('edit-form').addEventListener('submit', function(event) 
     // Hide the form after saving
     document.getElementById('edit-form').style.display = 'none';
     document.getElementById('user-profile').style.display = 'flex';
+    document.getElementById('avatar-input').value = '';
 });
 
 document.getElementById('back-button').addEventListener('click', function(event) {

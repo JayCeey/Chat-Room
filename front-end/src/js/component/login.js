@@ -21,8 +21,9 @@ export async function initLogin(){
         console.log(encrypted_pwd);
     
         const loginRequest = { 
-            'username': username, 
-            'password': encrypted_pwd,
+            'principal': username, 
+            'credentials': encrypted_pwd,
+            'sysType': 0,
         };
     
         console.log(JSON.stringify(loginRequest))
@@ -34,14 +35,10 @@ export async function initLogin(){
         .then(data => {
             console.log("返回data: ", data);
             if(data.success){
-                // 登录成功应该设置一个token来验证身份，包含用户的身份信息，存储在sessionStorage里
-
-                sessionStorage.setItem('userSessionInfo', JSON.stringify({
-                    'userId': data.userId,
-                    'username': data.username,
-                    'userRole': data.userRole,
-                }));
-
+                console.log("登陆成功！")
+                sessionStorage.setItem('accessToken', data.data.accessToken);
+                // 初始化用户
+                // sessionStorage.setItem('user', JSON.stringify(data.data.user));
                 showAlertBox("登陆成功")
                 window.location.href = "index.html"; // 跳转到/index.html
             }else{
